@@ -103,6 +103,12 @@ function App() {
     }
   };
 
+  // Canvas Click Coordinate Handler
+  const handleCanvasClickCoordinate = (coord: { x: number; y: number }) => {
+    setPendingCoordQuery(coord);
+    setActiveTabMobile('docent');
+  };
+
   // Select Curated Focal Point
   const handleSelectFocalPoint = (fp: FocalPoint) => {
     setViewport((prev) => ({
@@ -152,6 +158,7 @@ function App() {
             artwork={currentArtwork}
             viewport={viewport}
             onViewportChange={handleViewportChange}
+            onCanvasClickCoordinate={handleCanvasClickCoordinate}
             onSelectFocalPoint={handleSelectFocalPoint}
           />
         </main>

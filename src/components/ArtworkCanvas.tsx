@@ -17,6 +17,7 @@ interface ArtworkCanvasProps {
   artwork: Artwork;
   viewport: ViewportState;
   onViewportChange: (newVp: Partial<ViewportState>) => void;
+  onCanvasClickCoordinate: (coord: { x: number; y: number }) => void;
   onSelectFocalPoint: (fp: FocalPoint) => void;
 }
 
@@ -24,6 +25,7 @@ export const ArtworkCanvas: React.FC<ArtworkCanvasProps> = ({
   artwork,
   viewport,
   onViewportChange,
+  onCanvasClickCoordinate,
   onSelectFocalPoint,
 }) => {
   const containerRef = useRef<HTMLDivElement>(null);
@@ -149,6 +151,7 @@ export const ArtworkCanvas: React.FC<ArtworkCanvasProps> = ({
     const clampedY = Math.min(Math.max(0, parseFloat(artY.toFixed(1))), 100);
 
     setClickRipple({ x: clampedX, y: clampedY, id: Date.now() });
+    onCanvasClickCoordinate({ x: clampedX, y: clampedY });
   };
 
   // Keyboard navigation
