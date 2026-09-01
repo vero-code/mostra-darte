@@ -1,4 +1,4 @@
-import { useState, useCallback } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import type {
   Artwork,
   ChatMessage,
@@ -31,6 +31,17 @@ function App() {
 
   const [ambientPlaying, setAmbientPlaying] = useState(false);
   const [activeTabMobile, setActiveTabMobile] = useState<'canvas' | 'docent'>('canvas');
+
+  // Initial Curatorial Welcome Message
+  useEffect(() => {
+    const welcomeMessage: ChatMessage = {
+      id: 'welcome-1',
+      role: 'assistant',
+      content: `Welcome to **Mostra d'Arte**, esteemed visitor. I am your Head Curator and Virtual Docent.\n\nHere, we explore art history not merely through passive viewing, but through dynamic direction of attention. Before us hangs Vincent van Gogh's transcendent **${currentArtwork.title}** (1889).\n\nNotice the ecstatic swirl of cosmic energy and earthly melancholy. I can physically steer your view to any brushstroke or hidden symbol. What captures your curiosity? Ask me any question, or tap directly onto the canvas!`,
+      timestamp: Date.now(),
+    };
+    setMessages([welcomeMessage]);
+  }, []);
 
   // Update viewport state helper
   const handleViewportChange = useCallback((newVp: Partial<ViewportState>) => {
