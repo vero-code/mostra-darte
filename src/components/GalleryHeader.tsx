@@ -4,7 +4,8 @@ import {
   ChevronDown,
   Layers,
  } from 'lucide-react';
-import type { Artwork } from '../types';
+ import { GalleryWebMCP } from './GalleryWebMCP';
+import type { Artwork, ViewportState } from '../types';
 import { MASTERPIECES } from '../data/artworks';
 
 interface GalleryHeaderProps {
@@ -13,6 +14,7 @@ interface GalleryHeaderProps {
   ambientPlaying: boolean;
   onToggleAmbient: () => void;
   onOpenSalonModal: () => void;
+  onViewportChange: (newVp: Partial<ViewportState>) => void;
 }
 
 export const GalleryHeader: React.FC<GalleryHeaderProps> = ({
@@ -21,6 +23,7 @@ export const GalleryHeader: React.FC<GalleryHeaderProps> = ({
   ambientPlaying,
   onToggleAmbient,
   onOpenSalonModal,
+  onViewportChange,
 }) => {
   const [dropdownOpen, setDropdownOpen] = useState(false);
 
@@ -117,6 +120,9 @@ export const GalleryHeader: React.FC<GalleryHeaderProps> = ({
 
       {/* Header Actions */}
       <div className="flex items-center gap-2 md:gap-3">
+        {/* WebMCP indicator */}
+        <GalleryWebMCP onViewportChange={onViewportChange} />
+
         {/* Salon Wall Browser */}
         <button
           id="btn-open-salon"

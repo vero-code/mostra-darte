@@ -144,6 +144,7 @@ function App() {
         ambientPlaying={ambientPlaying}
         onToggleAmbient={handleToggleAmbient}
         onOpenSalonModal={() => setIsSalonModalOpen(true)}
+        onViewportChange={handleViewportChange}
       />
 
       {/* Main Split-Screen Workspace */}
