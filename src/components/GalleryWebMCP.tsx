@@ -101,6 +101,36 @@ export const GalleryWebMCP: React.FC<GalleryWebMCPProps> = ({
         if (err?.name !== 'AbortError') console.error(err);
       });
 
+      // Tool 3: Reset view to full canvas
+      (document as any).modelContext.registerTool(
+        {
+          name: "reset_view",
+          description: "Resets the canvas camera zoom back to 1.0x to view the entire framed painting composition as a whole.",
+          inputSchema: {
+            type: "object",
+            properties: {
+              note: {
+                type: "string",
+                description: "Optional note or reason for taking in the full composition.",
+              },
+            },
+          },
+          execute: async () => {
+            onViewportChange({
+              zoom: 1,
+              x: 50,
+              y: 50,
+              activeLabel: undefined,
+              isAutoAnimating: true,
+            });
+            return "Camera zoom successfully reset to 1.0x viewing the complete painting.";
+          },
+        },
+        { signal: controller.signal }
+      )?.catch?.((err: any) => {
+        if (err?.name !== 'AbortError') console.error(err);
+      });
+
       setIsRegistered(true);
     } catch (err) {
       console.error("Failed to register WebMCP tool:", err);
@@ -110,14 +140,14 @@ export const GalleryWebMCP: React.FC<GalleryWebMCPProps> = ({
       controller.abort();
       setIsRegistered(false);
     };
-  }, [onViewportChange]);
+  }, [onViewportChange, onSelectArtwork]);
 
   return (
     <div className="flex items-center gap-2 px-3 py-1 rounded-full text-xs font-mono border backdrop-blur-md transition-all duration-300 select-none bg-stone-900/90 border-stone-800 text-stone-300 shadow-md">
       <span className={`w-2 h-2 rounded-full ${isSupported && isRegistered ? 'bg-emerald-400 animate-pulse' : 'bg-amber-400'}`} />
       <span>
         {isSupported && isRegistered
-          ? 'WebMCP: 2 Tools Active'
+          ? 'WebMCP: 3 Tools Active'
           : isSupported
           ? 'WebMCP: Initializing...'
           : 'WebMCP: Ready (Waiting for Chrome Agent)'}
