@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import {
+  Music,
   ChevronDown,
   Layers,
  } from 'lucide-react';
@@ -9,12 +10,16 @@ import { MASTERPIECES } from '../data/artworks';
 interface GalleryHeaderProps {
   currentArtwork: Artwork;
   onSelectArtwork: (artwork: Artwork) => void;
+  ambientPlaying: boolean;
+  onToggleAmbient: () => void;
   onOpenSalonModal: () => void;
 }
 
 export const GalleryHeader: React.FC<GalleryHeaderProps> = ({
   currentArtwork,
   onSelectArtwork,
+  ambientPlaying,
+  onToggleAmbient,
   onOpenSalonModal,
 }) => {
   const [dropdownOpen, setDropdownOpen] = useState(false);
@@ -121,6 +126,20 @@ export const GalleryHeader: React.FC<GalleryHeaderProps> = ({
         >
           <Layers className="w-3.5 h-3.5 text-amber-400" />
           <span>Salon Gallery</span>
+        </button>
+
+        {/* Ambient Acoustics Synthesizer */}
+        <button
+          id="btn-ambient-sound"
+          onClick={onToggleAmbient}
+          title={ambientPlaying ? 'Mute Museum Hall Acoustics' : 'Play Museum Hall Acoustics'}
+          className={`p-2 rounded-lg transition-colors ${
+            ambientPlaying
+              ? 'bg-amber-500/20 text-amber-300 border border-amber-500/40'
+              : 'bg-stone-900 hover:bg-stone-800 border border-stone-800 text-stone-400 hover:text-stone-200'
+          }`}
+        >
+          <Music className="w-4 h-4" />
         </button>
       </div>
     </header>
