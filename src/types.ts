@@ -56,6 +56,20 @@ export interface Artwork {
   suggestedQuestions: string[];
 }
 
+export interface ChatMessage {
+  id: string;
+  role: 'user' | 'assistant' | 'system';
+  content: string;
+  timestamp: number;
+  activeFocalPoint?: {
+    x: number;
+    y: number;
+    zoom: number;
+    label?: string;
+  };
+  audioBase64?: string;
+}
+
 export interface ViewportState {
   zoom: number;
   x: number; // 0 to 100

@@ -1,7 +1,12 @@
 import { useState, useCallback } from 'react';
-import type { Artwork, ViewportState } from './types';
+import type {
+  Artwork,
+  ChatMessage,
+  ViewportState,
+} from './types';
 import { MASTERPIECES } from './data/artworks';
 import { ArtworkCanvas } from './components/ArtworkCanvas.tsx';
+import { DocentChat } from './components/DocentChat.tsx';
 import { GalleryHeader } from './components/GalleryHeader.tsx';
 import { MasterpieceModal } from './components/MasterpieceModal.tsx';
 import { ambientAudio } from './utils/ambientAudio';
@@ -18,6 +23,10 @@ function App() {
     gridActive: false,
   });
 
+  const [messages, setMessages] = useState<ChatMessage[]>([]);
+  const [isThinking, setIsThinking] = useState(false);
+  const [pendingCoordQuery, setPendingCoordQuery] = useState<{ x: number; y: number } | null>(null);
+
   const [isSalonModalOpen, setIsSalonModalOpen] = useState(false);
 
   const [ambientPlaying, setAmbientPlaying] = useState(false);
@@ -27,6 +36,60 @@ function App() {
   const handleViewportChange = useCallback((newVp: Partial<ViewportState>) => {
     setViewport((prev) => ({ ...prev, ...newVp }));
   }, []);
+
+  // Send message to Docent
+  const handleSendMessage = async (text: string, coordQuery?: { x: number; y: number }) => {
+    if (!text.trim() || isThinking) return;
+
+    const userMessage: ChatMessage = {
+      id: `user-${Date.now()}`,
+      role: 'user',
+      content: text,
+      timestamp: Date.now(),
+    };
+
+    const newHistory = [...messages, userMessage];
+    setMessages(newHistory);
+    setIsThinking(true);
+
+    try {
+      const response = await fetch('/api/chat', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          messages: newHistory,
+          currentArtwork,
+          userCoordQuery: coordQuery,
+        }),
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to consult docent');
+      }
+
+      const data = await response.json();
+
+      const assistantMessage: ChatMessage = {
+        id: `assistant-${Date.now()}`,
+        role: 'assistant',
+        content: data.content,
+        timestamp: Date.now(),
+      };
+
+      setMessages((prev) => [...prev, assistantMessage]);
+    } catch (err) {
+      console.error('Error contacting docent:', err);
+      const errorMessage: ChatMessage = {
+        id: `assistant-err-${Date.now()}`,
+        role: 'assistant',
+        content: `Forgive me, dear visitor. The gallery acoustics seem momentarily disturbed. Allow me to redirect your gaze to ${currentArtwork.title}.`,
+        timestamp: Date.now(),
+      };
+      setMessages((prev) => [...prev, errorMessage]);
+    } finally {
+      setIsThinking(false);
+    }
+  };
 
   // Switch Masterpiece
   const handleSelectArtwork = (artwork: Artwork) => {
@@ -67,7 +130,20 @@ function App() {
         </main>
 
         {/* Right: Virtual Docent Attention Chat Panel */}
-        <aside>Virtual Docent Attention Chat Panel</aside>
+        <aside
+          className={`w-full md:w-[420px] lg:w-[460px] xl:w-[500px] h-full shrink-0 ${
+            activeTabMobile === 'docent' ? 'block' : 'hidden md:block'
+          }`}
+        >
+          <DocentChat
+            artwork={currentArtwork}
+            messages={messages}
+            isThinking={isThinking}
+            onSendMessage={handleSendMessage}
+            pendingCoordQuery={pendingCoordQuery}
+            onClearCoordQuery={() => setPendingCoordQuery(null)}
+          />
+        </aside>
       </div>
 
       {/* Masterpiece Salon Wall Browser Modal */}
