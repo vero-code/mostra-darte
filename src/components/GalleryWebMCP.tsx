@@ -131,6 +131,32 @@ export const GalleryWebMCP: React.FC<GalleryWebMCPProps> = ({
         if (err?.name !== 'AbortError') console.error(err);
       });
 
+      // Tool 4: Toggle gallery vignette spotlight
+      (document as any).modelContext.registerTool(
+        {
+          name: "toggle_spotlight",
+          description: "Activates or deactivates a focused museum vignette spotlight on the painting, darkening ambient background surroundings for dramatic focus.",
+          inputSchema: {
+            type: "object",
+            properties: {
+              active: {
+                type: "boolean",
+                description: "True to turn on dramatic focused spotlight, false for standard gallery lighting.",
+              },
+            },
+            required: ["active"],
+          },
+          execute: async ({ active }: any) => {
+            const isEnabled = Boolean(active);
+            onViewportChange({ spotlightActive: isEnabled });
+            return `Gallery spotlight dramatically ${isEnabled ? 'activated' : 'deactivated'}.`;
+          },
+        },
+        { signal: controller.signal }
+      )?.catch?.((err: any) => {
+        if (err?.name !== 'AbortError') console.error(err);
+      });
+
       setIsRegistered(true);
     } catch (err) {
       console.error("Failed to register WebMCP tool:", err);
@@ -147,7 +173,7 @@ export const GalleryWebMCP: React.FC<GalleryWebMCPProps> = ({
       <span className={`w-2 h-2 rounded-full ${isSupported && isRegistered ? 'bg-emerald-400 animate-pulse' : 'bg-amber-400'}`} />
       <span>
         {isSupported && isRegistered
-          ? 'WebMCP: 3 Tools Active'
+          ? 'WebMCP: 4 Tools Active'
           : isSupported
           ? 'WebMCP: Initializing...'
           : 'WebMCP: Ready (Waiting for Chrome Agent)'}
