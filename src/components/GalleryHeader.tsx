@@ -1,16 +1,21 @@
 import React, { useState } from 'react';
-import { ChevronDown } from 'lucide-react';
+import {
+  ChevronDown,
+  Layers,
+ } from 'lucide-react';
 import type { Artwork } from '../types';
 import { MASTERPIECES } from '../data/artworks';
 
 interface GalleryHeaderProps {
   currentArtwork: Artwork;
   onSelectArtwork: (artwork: Artwork) => void;
+  onOpenSalonModal: () => void;
 }
 
 export const GalleryHeader: React.FC<GalleryHeaderProps> = ({
   currentArtwork,
   onSelectArtwork,
+  onOpenSalonModal,
 }) => {
   const [dropdownOpen, setDropdownOpen] = useState(false);
 
@@ -94,6 +99,20 @@ export const GalleryHeader: React.FC<GalleryHeaderProps> = ({
             </>
           )}
         </div>
+      </div>
+
+      {/* Header Actions */}
+      <div className="flex items-center gap-2 md:gap-3">
+        {/* Salon Wall Browser */}
+        <button
+          id="btn-open-salon"
+          onClick={onOpenSalonModal}
+          title="Browse Masterpiece Salon"
+          className="hidden lg:flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-stone-900 hover:bg-stone-800 border border-stone-750 text-stone-300 hover:text-amber-200 text-xs font-medium transition-colors"
+        >
+          <Layers className="w-3.5 h-3.5 text-amber-400" />
+          <span>Salon Gallery</span>
+        </button>
       </div>
     </header>
   );
