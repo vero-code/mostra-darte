@@ -36,11 +36,16 @@ export const ArtworkCanvas: React.FC<ArtworkCanvasProps> = ({
   const [activeHoverHotspot, setActiveHoverHotspot] = useState<FocalPoint | null>(null);
   const [clickRipple, setClickRipple] = useState<{ x: number; y: number; id: number } | null>(null);
   const [imageLoaded, setImageLoaded] = useState(false);
+  const imgRef = useRef<HTMLImageElement>(null);
 
   // Reset image loaded on artwork change
   useEffect(() => {
-    setImageLoaded(false);
-  }, [artwork.id]);
+    if (imgRef.current?.complete && imgRef.current?.naturalWidth > 0) {
+      setImageLoaded(true);
+    } else {
+      setImageLoaded(false);
+    }
+  }, [artwork.id, artwork.imageUrl]);
 
   // Handle Fullscreen
   const toggleFullscreen = () => {
@@ -225,12 +230,13 @@ export const ArtworkCanvas: React.FC<ArtworkCanvasProps> = ({
         >
           {/* High-res Artwork Image */}
           <img
+            ref={imgRef}
             id="masterpiece-canvas-img"
             src={artwork.imageUrl}
             alt={artwork.title}
             referrerPolicy="no-referrer"
-            crossOrigin="anonymous"
             onLoad={() => setImageLoaded(true)}
+            onError={() => setImageLoaded(true)}
             className={`w-full h-full object-contain pointer-events-none block transition-opacity duration-500 ${
               imageLoaded ? 'opacity-100' : 'opacity-0'
             }`}
