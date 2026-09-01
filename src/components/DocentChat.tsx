@@ -3,12 +3,15 @@ import { motion } from 'motion/react';
 import ReactMarkdown from 'react-markdown';
 import {
   Send,
+  Sparkles,
+  Volume2,
   Compass,
   ArrowUpRight,
   HelpCircle,
   CornerDownRight,
 } from 'lucide-react';
 import type { Artwork, ChatMessage } from '../types';
+import { docentSpeech } from '../utils/speech';
 
 interface DocentChatProps {
   artwork: Artwork;
@@ -31,6 +34,13 @@ export const DocentChat: React.FC<DocentChatProps> = ({
   const [isSpeaking, setIsSpeaking] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
+
+  // Sync speech speaking state
+  useEffect(() => {
+    docentSpeech.setSpeakingCallback((speaking) => {
+      setIsSpeaking(speaking);
+    });
+  }, []);
 
   // Auto scroll to bottom of chat
   useEffect(() => {
@@ -60,6 +70,10 @@ export const DocentChat: React.FC<DocentChatProps> = ({
   const handleSuggestionClick = (prompt: string) => {
     if (isThinking) return;
     onSendMessage(prompt);
+  };
+
+  const handleReadAloud = (text: string) => {
+    docentSpeech.speak(text, true);
   };
 
   return (
@@ -113,6 +127,23 @@ export const DocentChat: React.FC<DocentChatProps> = ({
                     : 'bg-gradient-to-br from-amber-700 to-amber-800 text-stone-50 border border-amber-600/60'
                 }`}
               >
+                {/* Assistant Label */}
+                {isAssistant && (
+                  <div className="flex items-center justify-between mb-2 text-xs text-amber-400/90 font-display">
+                    <span className="flex items-center gap-1.5 font-semibold">
+                      <Sparkles className="w-3.5 h-3.5 text-amber-400" />
+                      Head Curator
+                    </span>
+                    <button
+                      onClick={() => handleReadAloud(msg.content)}
+                      title="Read aloud"
+                      className="text-stone-400 hover:text-amber-300 transition-colors p-1"
+                    >
+                      <Volume2 className="w-3.5 h-3.5" />
+                    </button>
+                  </div>
+                )}
+
                 {/* Markdown content */}
                 <div className="text-sm font-serif-body leading-relaxed space-y-2">
                   <ReactMarkdown
