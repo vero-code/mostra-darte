@@ -1,4 +1,6 @@
-export const MASTERPIECES = [
+import type { Artwork } from '../types';
+
+export const MASTERPIECES: Artwork[] = [
   {
     id: 'starry-night',
     title: 'The Starry Night',

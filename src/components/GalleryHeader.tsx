@@ -1,4 +1,19 @@
-export const GalleryHeader: React.FC = () => {
+import React, { useState } from 'react';
+import { ChevronDown } from 'lucide-react';
+import type { Artwork } from '../types';
+import { MASTERPIECES } from '../data/artworks';
+
+interface GalleryHeaderProps {
+  currentArtwork: Artwork;
+  onSelectArtwork: (artwork: Artwork) => void;
+}
+
+export const GalleryHeader: React.FC<GalleryHeaderProps> = ({
+  currentArtwork,
+  onSelectArtwork,
+}) => {
+  const [dropdownOpen, setDropdownOpen] = useState(false);
+
   return (
     <header className="h-16 bg-stone-950/95 border-b border-stone-800/80 px-4 md:px-6 flex items-center justify-between z-30 shrink-0 select-none">
       {/* Gallery Brand / Crest */}
@@ -21,6 +36,64 @@ export const GalleryHeader: React.FC = () => {
         </div>
 
         <div className="h-7 w-[1px] bg-stone-800 hidden md:block"></div>
+
+        {/* Masterpiece Quick Dropdown Selector */}
+        <div className="relative">
+          <button
+            id="btn-artwork-dropdown"
+            onClick={() => setDropdownOpen(!dropdownOpen)}
+            className="flex items-center gap-2 bg-stone-900/90 hover:bg-stone-850 border border-stone-750 hover:border-amber-500/40 px-3 py-1.5 rounded-lg text-left transition-all"
+          >
+            <div className="max-w-[140px] sm:max-w-[200px] md:max-w-[240px] truncate">
+              <span className="text-xs font-semibold text-amber-200 block truncate">
+                {currentArtwork.title}
+              </span>
+              <span className="text-[10px] text-stone-400 block truncate">
+                {currentArtwork.artist} ({currentArtwork.year})
+              </span>
+            </div>
+            <ChevronDown className="w-3.5 h-3.5 text-amber-400 shrink-0" />
+          </button>
+
+          {dropdownOpen && (
+            <>
+              <div
+                className="fixed inset-0 z-40"
+                onClick={() => setDropdownOpen(false)}
+              />
+              <div className="absolute top-full left-0 mt-1.5 w-72 bg-stone-900 border border-stone-700/80 rounded-xl shadow-2xl z-50 overflow-hidden py-1">
+                <div className="px-3 py-2 border-b border-stone-800 text-[10px] font-mono uppercase text-amber-400/80 flex items-center justify-between">
+                  <span>Masterpiece Collection</span>
+                </div>
+                <div className="max-h-72 overflow-y-auto">
+                  {MASTERPIECES.map((art) => (
+                    <button
+                      key={art.id}
+                      onClick={() => {
+                        onSelectArtwork(art);
+                        setDropdownOpen(false);
+                      }}
+                      className={`w-full text-left px-3 py-2 flex items-center gap-3 hover:bg-stone-800 transition-colors ${
+                        art.id === currentArtwork.id ? 'bg-amber-500/15 border-l-2 border-amber-400' : ''
+                      }`}
+                    >
+                      <img
+                        src={art.imageUrl}
+                        alt={art.title}
+                        referrerPolicy="no-referrer"
+                        className="w-9 h-9 rounded object-cover border border-stone-700 shrink-0"
+                      />
+                      <div className="min-w-0 flex-1">
+                        <p className="text-xs font-semibold text-stone-200 truncate">{art.title}</p>
+                        <p className="text-[10px] text-stone-400 truncate">{art.artist}</p>
+                      </div>
+                    </button>
+                  ))}
+                </div>
+              </div>
+            </>
+          )}
+        </div>
       </div>
     </header>
   );

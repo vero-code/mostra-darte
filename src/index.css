@@ -22,3 +22,19 @@
     font-family: var(--font-newsreader);
   }
 }
+
+/* Custom scrollbars */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-track {
+  background: rgba(28, 25, 23, 0.6);
+}
+::-webkit-scrollbar-thumb {
+  background: rgba(217, 119, 6, 0.35);
+  border-radius: 9999px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(217, 119, 6, 0.6);
+}
