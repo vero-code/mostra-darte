@@ -69,6 +69,15 @@ export const GalleryHeader: React.FC<GalleryHeaderProps> = ({
               <div className="absolute top-full left-0 mt-1.5 w-72 bg-stone-900 border border-stone-700/80 rounded-xl shadow-2xl z-50 overflow-hidden py-1">
                 <div className="px-3 py-2 border-b border-stone-800 text-[10px] font-mono uppercase text-amber-400/80 flex items-center justify-between">
                   <span>Masterpiece Collection</span>
+                  <button
+                    onClick={() => {
+                      setDropdownOpen(false);
+                      onOpenSalonModal();
+                    }}
+                    className="text-stone-300 hover:text-amber-300 underline"
+                  >
+                    View All
+                  </button>
                 </div>
                 <div className="max-h-72 overflow-y-auto">
                   {MASTERPIECES.map((art) => (
