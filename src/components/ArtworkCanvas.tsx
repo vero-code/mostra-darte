@@ -17,12 +17,14 @@ interface ArtworkCanvasProps {
   artwork: Artwork;
   viewport: ViewportState;
   onViewportChange: (newVp: Partial<ViewportState>) => void;
+  onSelectFocalPoint: (fp: FocalPoint) => void;
 }
 
 export const ArtworkCanvas: React.FC<ArtworkCanvasProps> = ({
   artwork,
   viewport,
   onViewportChange,
+  onSelectFocalPoint,
 }) => {
   const containerRef = useRef<HTMLDivElement>(null);
   const [isDragging, setIsDragging] = useState(false);
@@ -262,7 +264,7 @@ export const ArtworkCanvas: React.FC<ArtworkCanvasProps> = ({
                     style={{ left: `${fp.x}%`, top: `${fp.y}%` }}
                     onClick={(e) => {
                       e.stopPropagation();
-                    //   onSelectFocalPoint(fp);
+                      onSelectFocalPoint(fp);
                     }}
                     onMouseEnter={() => setActiveHoverHotspot(fp)}
                     onMouseLeave={() => setActiveHoverHotspot(null)}

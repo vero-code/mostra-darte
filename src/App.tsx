@@ -2,6 +2,7 @@ import { useState, useEffect, useCallback } from 'react';
 import type {
   Artwork,
   ChatMessage,
+  FocalPoint,
   ViewportState,
 } from './types';
 import { MASTERPIECES } from './data/artworks';
@@ -102,6 +103,20 @@ function App() {
     }
   };
 
+  // Select Curated Focal Point
+  const handleSelectFocalPoint = (fp: FocalPoint) => {
+    setViewport((prev) => ({
+      ...prev,
+      zoom: fp.zoom,
+      x: fp.x,
+      y: fp.y,
+      activeLabel: fp.name,
+      isAutoAnimating: true,
+    }));
+
+    handleSendMessage(`Tell me about ${fp.name} at coordinates {x: ${fp.x}%, y: ${fp.y}%}.`);
+  };
+
   // Switch Masterpiece
   const handleSelectArtwork = (artwork: Artwork) => {
     if (artwork.id === currentArtwork.id) return;
@@ -137,6 +152,7 @@ function App() {
             artwork={currentArtwork}
             viewport={viewport}
             onViewportChange={handleViewportChange}
+            onSelectFocalPoint={handleSelectFocalPoint}
           />
         </main>
 
