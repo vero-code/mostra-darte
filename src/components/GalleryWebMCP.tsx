@@ -1,12 +1,15 @@
 import React, { useEffect, useState } from 'react';
-import type { ViewportState } from '../types';
+import type { Artwork, ViewportState } from '../types';
+import { MASTERPIECES } from '../data/artworks';
 
 interface GalleryWebMCPProps {
   onViewportChange: (newVp: Partial<ViewportState>) => void;
+  onSelectArtwork: (artwork: Artwork) => void;
 }
 
 export const GalleryWebMCP: React.FC<GalleryWebMCPProps> = ({
   onViewportChange,
+  onSelectArtwork,
 }) => {
   const [isSupported, setIsSupported] = useState(false);
   const [isRegistered, setIsRegistered] = useState(false);
@@ -21,6 +24,7 @@ export const GalleryWebMCP: React.FC<GalleryWebMCPProps> = ({
 
     // WebMCP tool registration
     try {
+      // Tool 1: zoom_painting
       (document as any).modelContext.registerTool(
         {
           name: "zoom_painting",
@@ -51,6 +55,52 @@ export const GalleryWebMCP: React.FC<GalleryWebMCPProps> = ({
         if (err?.name !== 'AbortError') console.error("WebMCP registration error:", err);
       });
 
+      // Tool 2: Switching the painting in the gallery
+      (document as any).modelContext.registerTool(
+        {
+          name: "switch_masterpiece",
+          description: "Exhibits a different masterpiece in the gallery room. Available IDs: 'starry-night', 'mona-lisa', 'girl-pearl-earring', 'the-kiss', 'birth-of-venus', 'great-wave', 'creation-of-adam'.",
+          inputSchema: {
+            type: "object",
+            properties: {
+              artwork_id: {
+                type: "string",
+                description: "ID of the masterpiece to exhibit.",
+                enum: [
+                  "starry-night",
+                  "mona-lisa",
+                  "girl-pearl-earring",
+                  "the-kiss",
+                  "birth-of-venus",
+                  "great-wave",
+                  "creation-of-adam",
+                ],
+              },
+              reason: {
+                type: "string",
+                description: "Curatorial connection or reason for changing artwork.",
+              },
+            },
+            required: ["artwork_id"],
+          },
+          execute: async ({ artwork_id }: any) => {
+            const cleanId = String(artwork_id || '').toLowerCase().trim();
+            const target = MASTERPIECES.find(
+              (m) => m.id.toLowerCase() === cleanId || m.title.toLowerCase().includes(cleanId)
+            );
+            if (!target) {
+              throw new Error(`Masterpiece "${artwork_id}" not found in gallery collection.`);
+            }
+            onSelectArtwork(target);
+            onViewportChange({ zoom: 1, x: 50, y: 50, activeLabel: undefined, isAutoAnimating: true });
+            return `Gallery exhibition successfully switched to "${target.title}" by ${target.artist}.`;
+          },
+        },
+        { signal: controller.signal }
+      )?.catch?.((err: any) => {
+        if (err?.name !== 'AbortError') console.error(err);
+      });
+
       setIsRegistered(true);
     } catch (err) {
       console.error("Failed to register WebMCP tool:", err);
@@ -67,7 +117,7 @@ export const GalleryWebMCP: React.FC<GalleryWebMCPProps> = ({
       <span className={`w-2 h-2 rounded-full ${isSupported && isRegistered ? 'bg-emerald-400 animate-pulse' : 'bg-amber-400'}`} />
       <span>
         {isSupported && isRegistered
-          ? 'WebMCP: zoom_painting Active'
+          ? 'WebMCP: 2 Tools Active'
           : isSupported
           ? 'WebMCP: Initializing...'
           : 'WebMCP: Ready (Waiting for Chrome Agent)'}

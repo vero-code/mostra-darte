@@ -121,7 +121,10 @@ export const GalleryHeader: React.FC<GalleryHeaderProps> = ({
       {/* Header Actions */}
       <div className="flex items-center gap-2 md:gap-3">
         {/* WebMCP indicator */}
-        <GalleryWebMCP onViewportChange={onViewportChange} />
+        <GalleryWebMCP
+          onViewportChange={onViewportChange}
+          onSelectArtwork={onSelectArtwork}
+        />
 
         {/* Salon Wall Browser */}
         <button
