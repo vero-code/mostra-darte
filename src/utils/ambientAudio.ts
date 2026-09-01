@@ -43,7 +43,7 @@ class AmbientAudioEngine {
         osc.type = i % 2 === 0 ? 'sine' : 'triangle';
         osc.frequency.setValueAtTime(freq + (Math.random() * 0.4 - 0.2), this.ctx!.currentTime);
 
-        const panner = this.ctx!.createStereoPanner ? this.ctx!.createStereoPanner() : null;
+        const panner = typeof this.ctx!.createStereoPanner === 'function' ? this.ctx!.createStereoPanner() : null;
         if (panner) {
           panner.pan.setValueAtTime((i - 1.5) * 0.4, this.ctx!.currentTime);
           osc.connect(panner);

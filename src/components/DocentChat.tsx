@@ -2,12 +2,12 @@ import React, { useState, useRef, useEffect } from 'react';
 import { motion } from 'motion/react';
 import ReactMarkdown from 'react-markdown';
 import {
-  Send,
+  // Send,
   Sparkles,
   Volume2,
   Compass,
-  ArrowUpRight,
-  HelpCircle,
+  // ArrowUpRight,
+  // HelpCircle,
   CornerDownRight,
 } from 'lucide-react';
 import type { Artwork, ChatMessage } from '../types';
@@ -23,14 +23,14 @@ interface DocentChatProps {
 }
 
 export const DocentChat: React.FC<DocentChatProps> = ({
-  artwork,
+  // artwork,
   messages,
   isThinking,
-  onSendMessage,
+  // onSendMessage,
   pendingCoordQuery,
   onClearCoordQuery,
 }) => {
-  const [inputText, setInputText] = useState('');
+  const [, setInputText] = useState('');
   const [isSpeaking, setIsSpeaking] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
@@ -55,22 +55,22 @@ export const DocentChat: React.FC<DocentChatProps> = ({
     }
   }, [pendingCoordQuery]);
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!inputText.trim() || isThinking) return;
+  // const handleSubmit = (e: React.FormEvent) => {
+  //   e.preventDefault();
+  //   if (!inputText.trim() || isThinking) return;
 
-    const query = inputText.trim();
-    setInputText('');
-    onSendMessage(query, pendingCoordQuery || undefined);
-    if (pendingCoordQuery) {
-      onClearCoordQuery();
-    }
-  };
+  //   const query = inputText.trim();
+  //   setInputText('');
+  //   onSendMessage(query, pendingCoordQuery || undefined);
+  //   if (pendingCoordQuery) {
+  //     onClearCoordQuery();
+  //   }
+  // };
 
-  const handleSuggestionClick = (prompt: string) => {
-    if (isThinking) return;
-    onSendMessage(prompt);
-  };
+  // const handleSuggestionClick = (prompt: string) => {
+  //   if (isThinking) return;
+  //   onSendMessage(prompt);
+  // };
 
   const handleReadAloud = (text: string) => {
     docentSpeech.speak(text, true);
@@ -185,7 +185,7 @@ export const DocentChat: React.FC<DocentChatProps> = ({
       </div>
 
       {/* Suggested Inquiries / Prompt Chips */}
-      <div className="px-4 py-2 border-t border-stone-800 bg-stone-950/40">
+      {/* <div className="px-4 py-2 border-t border-stone-800 bg-stone-950/40">
         <p className="text-[10px] uppercase font-mono tracking-wider text-amber-400/80 mb-2 flex items-center gap-1">
           <HelpCircle className="w-3 h-3" />
           Curatorial Inquiries for {artwork.title}
@@ -202,7 +202,7 @@ export const DocentChat: React.FC<DocentChatProps> = ({
             </button>
           ))}
         </div>
-      </div>
+      </div> */}
 
       {/* Pending Canvas Coordinate Query Banner */}
       {pendingCoordQuery && (
@@ -221,7 +221,7 @@ export const DocentChat: React.FC<DocentChatProps> = ({
       )}
 
       {/* Input Box */}
-      <form onSubmit={handleSubmit} className="p-3 border-t border-stone-800 bg-stone-950">
+      {/* <form onSubmit={handleSubmit} className="p-3 border-t border-stone-800 bg-stone-950">
         <div className="relative flex items-center">
           <input
             id="docent-chat-input"
@@ -246,7 +246,7 @@ export const DocentChat: React.FC<DocentChatProps> = ({
             <Send className="w-4 h-4" />
           </button>
         </div>
-      </form>
+      </form> */}
     </div>
   );
 };

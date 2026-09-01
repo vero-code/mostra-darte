@@ -120,7 +120,7 @@ function App() {
       isAutoAnimating: true,
     }));
 
-    handleSendMessage(`Tell me about ${fp.name} at coordinates {x: ${fp.x}%, y: ${fp.y}%}.`);
+    // handleSendMessage(`Tell me about ${fp.name} at coordinates {x: ${fp.x}%, y: ${fp.y}%}.`);
   };
 
   // Switch Masterpiece

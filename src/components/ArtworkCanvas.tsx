@@ -33,7 +33,7 @@ export const ArtworkCanvas: React.FC<ArtworkCanvasProps> = ({
   const [dragStart, setDragStart] = useState<{ x: number; y: number }>({ x: 0, y: 0 });
   const [showHotspots, setShowHotspots] = useState(true);
   const [isFullscreen, setIsFullscreen] = useState(false);
-  const [activeHoverHotspot, setActiveHoverHotspot] = useState<FocalPoint | null>(null);
+  // const [activeHoverHotspot, setActiveHoverHotspot] = useState<FocalPoint | null>(null);
   const [clickRipple, setClickRipple] = useState<{ x: number; y: number; id: number } | null>(null);
   const [imageLoaded, setImageLoaded] = useState(false);
   const imgRef = useRef<HTMLImageElement>(null);
@@ -275,8 +275,8 @@ export const ArtworkCanvas: React.FC<ArtworkCanvasProps> = ({
                       e.stopPropagation();
                       onSelectFocalPoint(fp);
                     }}
-                    onMouseEnter={() => setActiveHoverHotspot(fp)}
-                    onMouseLeave={() => setActiveHoverHotspot(null)}
+                    // onMouseEnter={() => setActiveHoverHotspot(fp)}
+                    // onMouseLeave={() => setActiveHoverHotspot(null)}
                   >
                     <div
                       className={`relative flex items-center justify-center transition-all duration-300 ${
