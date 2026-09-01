@@ -55,3 +55,14 @@ export interface Artwork {
   tours: GuidedTour[];
   suggestedQuestions: string[];
 }
+
+export interface ViewportState {
+  zoom: number;
+  x: number; // 0 to 100
+  y: number; // 0 to 100
+  isAutoAnimating: boolean;
+  activeLabel?: string;
+  spotlightActive: boolean;
+  loupeActive: boolean;
+  gridActive: boolean;
+}
