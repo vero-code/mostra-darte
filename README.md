@@ -71,16 +71,19 @@ All 11 tools are registered in real time via `document.modelContext.registerTool
 
 Mostra d'Arte strictly adheres to the **[W3C Web Machine Learning Working Draft](https://webmachinelearning.github.io/webmcp)** and Chromium Origin Trial specifications:
 
-1. **Multimodal Vision via Annotated Page Content (APC) (§ 5.2):**  
+1. **Imperative JavaScript API Architecture (§ 4.2):**  
+   Mostra d'Arte adopts the **Imperative WebMCP API** (`document.modelContext.registerTool`) rather than the declarative HTML form attribute approach (`<form toolname>`). Because our digital gallery actuates real-time canvas spring physics, Web Audio harmonic synthesis, and stateful React camera viewports, the imperative API grants direct programmatic actuation, JSON Schema validation, and bidirectional feedback with the browser agent.
+
+2. **Multimodal Vision via Annotated Page Content (APC) (§ 5.2):**  
    Chromium agents do not rely solely on DOM trees; they take real-time visual observations (APC snapshots) of the canvas. Mostra d'Arte connects this visual cortex with physical tool execution — the agent visually perceives details on canvas and translates them into precise viewport coordinates via `zoom_painting`.
    
-2. **Dynamic Tool Registry via `getTools()` & `toolchange` (§ 4.4):**  
-   The UI subscribes to native `document.modelContext.addEventListener("toolchange", ...)` events and queries active tools via `document.modelContext.getTools()`, updating the telemetry badge dynamically.
+3. **Dynamic Tool Registry via `getTools()` & `toolchange` (§ 4.4):**  
+   The UI subscribes to native `document.modelContext.addEventListener("toolchange", ...)` events and queries active tools dynamically via `document.modelContext.getTools()`, updating the telemetry badge without hardcoded lists.
 
-3. **Security Intent Declarations (`readOnlyHint`) (§ 4.2.1):**  
+4. **Security Intent Declarations (`readOnlyHint`) (§ 4.2.1):**  
    Exploratory tools declare `annotations: { readOnlyHint: true }` to eliminate confirmation friction, while transactional tools like `reserve_gallery_pass` execute real-world booking flows.
 
-4. **Cooperative Cancellation (`AbortSignal`) (§ 3.1):**  
+5. **Cooperative Cancellation (`AbortSignal`) (§ 3.1):**  
    All tool execution callbacks honor `{ signal: AbortSignal }`, immediately aborting active camera springs or network requests if the user changes commands.
 
 ---
@@ -108,7 +111,7 @@ You can test the agent tools in two simple steps:
 
 ## 💻 Tech Stack
 
-- **Web Standard:** W3C WebMCP (`document.modelContext` + `webmcp-types`)
+- **Web Standard:** W3C WebMCP (Imperative JS API via `document.modelContext` + `webmcp-types`)
 - **Framework:** React 19 + TypeScript + Vite
 - **Styling:** Vanilla CSS + Tailwind CSS v4
 - **Animations:** Motion (`motion/react`)
