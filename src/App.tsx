@@ -10,8 +10,9 @@ import { MASTERPIECES } from './data/artworks';
 import { ArtworkCanvas } from './components/ArtworkCanvas.tsx';
 import { DocentChat } from './components/DocentChat.tsx';
 import { GalleryHeader } from './components/GalleryHeader.tsx';
-import { MasterpieceModal } from './components/MasterpieceModal.tsx';
+import { ArtworkInfoPanel } from './components/ArtworkInfoPanel';
 import { TourPlayer } from './components/TourPlayer.tsx';
+import { MasterpieceModal } from './components/MasterpieceModal.tsx';
 import { ambientAudio } from './utils/ambientAudio';
 import { docentSpeech } from './utils/speech';
 
@@ -31,6 +32,7 @@ function App() {
   const [isThinking, setIsThinking] = useState(false);
   const [pendingCoordQuery, setPendingCoordQuery] = useState<{ x: number; y: number } | null>(null);
 
+  const [isInfoOpen, setIsInfoOpen] = useState(false);
   const [isSalonModalOpen, setIsSalonModalOpen] = useState(false);
   const [activeTour, setActiveTour] = useState<GuidedTour | null>(null);
   const [tourStopIndex, setTourStopIndex] = useState(0);
@@ -278,6 +280,8 @@ function App() {
       <GalleryHeader
         currentArtwork={currentArtwork}
         onSelectArtwork={handleSelectArtwork}
+        onToggleInfoPanel={() => setIsInfoOpen(!isInfoOpen)}
+        isInfoOpen={isInfoOpen}
         onStartTour={() => handleStartTour()}
         isTourActive={Boolean(activeTour)}
         ambientPlaying={ambientPlaying}
@@ -335,6 +339,15 @@ function App() {
           />
         </aside>
       </div>
+
+      {/* Curatorial Dossier Info Slide-out Drawer */}
+      <ArtworkInfoPanel
+        artwork={currentArtwork}
+        isOpen={isInfoOpen}
+        onClose={() => setIsInfoOpen(false)}
+        onSelectFocalPoint={handleSelectFocalPoint}
+        onStartTour={handleStartTour}
+      />
 
       {/* Masterpiece Salon Wall Browser Modal */}
       <MasterpieceModal

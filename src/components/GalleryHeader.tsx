@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import {
+  BookOpen,
   Music,
   Compass,
   ChevronDown,
@@ -12,6 +13,8 @@ import { MASTERPIECES } from '../data/artworks';
 interface GalleryHeaderProps {
   currentArtwork: Artwork;
   onSelectArtwork: (artwork: Artwork) => void;
+  onToggleInfoPanel: () => void;
+  isInfoOpen: boolean;
   onStartTour: () => void;
   isTourActive: boolean;
   ambientPlaying: boolean;
@@ -23,6 +26,8 @@ interface GalleryHeaderProps {
 export const GalleryHeader: React.FC<GalleryHeaderProps> = ({
   currentArtwork,
   onSelectArtwork,
+  onToggleInfoPanel,
+  isInfoOpen,
   onStartTour,
   isTourActive,
   ambientPlaying,
@@ -172,6 +177,21 @@ export const GalleryHeader: React.FC<GalleryHeaderProps> = ({
           }`}
         >
           <Music className="w-4 h-4" />
+        </button>
+
+        {/* Curator Dossier Info Panel Toggle */}
+        <button
+          id="btn-toggle-info"
+          onClick={onToggleInfoPanel}
+          title="Artwork Dossier & Color Analysis"
+          className={`flex items-center gap-1.5 p-2 md:px-3 md:py-1.5 rounded-lg text-xs font-medium transition-colors ${
+            isInfoOpen
+              ? 'bg-amber-500/20 text-amber-300 border border-amber-500/40'
+              : 'bg-stone-900 hover:bg-stone-800 border border-stone-800 text-stone-300 hover:text-amber-200'
+          }`}
+        >
+          <BookOpen className="w-4 h-4 text-amber-400" />
+          <span className="hidden md:inline">Dossier</span>
         </button>
       </div>
     </header>
