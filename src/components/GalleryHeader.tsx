@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import {
   Music,
+  Compass,
   ChevronDown,
   Layers,
  } from 'lucide-react';
@@ -11,6 +12,8 @@ import { MASTERPIECES } from '../data/artworks';
 interface GalleryHeaderProps {
   currentArtwork: Artwork;
   onSelectArtwork: (artwork: Artwork) => void;
+  onStartTour: () => void;
+  isTourActive: boolean;
   ambientPlaying: boolean;
   onToggleAmbient: () => void;
   onOpenSalonModal: () => void;
@@ -20,6 +23,8 @@ interface GalleryHeaderProps {
 export const GalleryHeader: React.FC<GalleryHeaderProps> = ({
   currentArtwork,
   onSelectArtwork,
+  onStartTour,
+  isTourActive,
   ambientPlaying,
   onToggleAmbient,
   onOpenSalonModal,
@@ -137,6 +142,22 @@ export const GalleryHeader: React.FC<GalleryHeaderProps> = ({
           <Layers className="w-3.5 h-3.5 text-amber-400" />
           <span>Salon Gallery</span>
         </button>
+
+        {/* Guided Master Tour button */}
+        {currentArtwork.tours.length > 0 && (
+          <button
+            id="btn-start-tour"
+            onClick={onStartTour}
+            className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium transition-all ${
+              isTourActive
+                ? 'bg-amber-500 text-stone-950 shadow-[0_0_15px_rgba(245,158,11,0.4)]'
+                : 'bg-gradient-to-r from-amber-600/80 to-amber-700/80 hover:from-amber-500 hover:to-amber-600 text-stone-100 border border-amber-500/50'
+            }`}
+          >
+            <Compass className="w-3.5 h-3.5" />
+            <span className="hidden sm:inline">Guided Tour</span>
+          </button>
+        )}
 
         {/* Ambient Acoustics Synthesizer */}
         <button

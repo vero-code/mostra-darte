@@ -3,6 +3,7 @@ import type {
   Artwork,
   ChatMessage,
   FocalPoint,
+  GuidedTour,
   ViewportState,
 } from './types';
 import { MASTERPIECES } from './data/artworks';
@@ -10,6 +11,7 @@ import { ArtworkCanvas } from './components/ArtworkCanvas.tsx';
 import { DocentChat } from './components/DocentChat.tsx';
 import { GalleryHeader } from './components/GalleryHeader.tsx';
 import { MasterpieceModal } from './components/MasterpieceModal.tsx';
+import { TourPlayer } from './components/TourPlayer.tsx';
 import { ambientAudio } from './utils/ambientAudio';
 
 function App() {
@@ -29,6 +31,8 @@ function App() {
   const [pendingCoordQuery, setPendingCoordQuery] = useState<{ x: number; y: number } | null>(null);
 
   const [isSalonModalOpen, setIsSalonModalOpen] = useState(false);
+  const [activeTour, setActiveTour] = useState<GuidedTour | null>(null);
+  const [tourStopIndex, setTourStopIndex] = useState(0);
 
   const [ambientPlaying, setAmbientPlaying] = useState(false);
   const [activeTabMobile, setActiveTabMobile] = useState<'canvas' | 'docent'>('canvas');
@@ -129,6 +133,89 @@ function App() {
     setCurrentArtwork(artwork);
   };
 
+  // Start Guided Tour
+  const handleStartTour = (tour?: GuidedTour) => {
+    const selectedTour = tour || currentArtwork.tours[0];
+    if (!selectedTour) return;
+
+    setActiveTour(selectedTour);
+    setTourStopIndex(0);
+
+    const firstStop = selectedTour.stops[0];
+    if (firstStop) {
+      setViewport((prev) => ({
+        ...prev,
+        zoom: firstStop.zoom,
+        x: firstStop.x,
+        y: firstStop.y,
+        activeLabel: firstStop.title,
+        isAutoAnimating: true,
+      }));
+
+      const tourMsg: ChatMessage = {
+        id: `tour-stop-0-${Date.now()}`,
+        role: 'assistant',
+        content: `**Tour: ${selectedTour.title}**\n\n*Stop 1 of ${selectedTour.stops.length}: ${firstStop.title}*\n\n${firstStop.narrative}`,
+        timestamp: Date.now(),
+      };
+      setMessages((prev) => [...prev, tourMsg]);
+    }
+  };
+
+  // Advance Tour Stop
+  const handleNextTourStop = () => {
+    if (!activeTour) return;
+    if (tourStopIndex < activeTour.stops.length - 1) {
+      const nextIdx = tourStopIndex + 1;
+      setTourStopIndex(nextIdx);
+      const stop = activeTour.stops[nextIdx];
+
+      setViewport((prev) => ({
+        ...prev,
+        zoom: stop.zoom,
+        x: stop.x,
+        y: stop.y,
+        activeLabel: stop.title,
+        isAutoAnimating: true,
+      }));
+
+      const tourMsg: ChatMessage = {
+        id: `tour-stop-${nextIdx}-${Date.now()}`,
+        role: 'assistant',
+        content: `*Stop ${nextIdx + 1} of ${activeTour.stops.length}: ${stop.title}*\n\n${stop.narrative}`,
+        timestamp: Date.now(),
+      };
+      setMessages((prev) => [...prev, tourMsg]);
+    } else {
+      // Tour completed
+      setActiveTour(null);
+      const finishMsg: ChatMessage = {
+        id: `tour-end-${Date.now()}`,
+        role: 'assistant',
+        content: `We have completed our journey through **${activeTour.title}**. You may now freely explore further details or choose another masterpiece from our Salon Wall.`,
+        timestamp: Date.now(),
+      };
+      setMessages((prev) => [...prev, finishMsg]);
+    }
+  };
+
+  // Prev Tour Stop
+  const handlePrevTourStop = () => {
+    if (!activeTour || tourStopIndex <= 0) return;
+    const prevIdx = tourStopIndex - 1;
+    setTourStopIndex(prevIdx);
+    const stop = activeTour.stops[prevIdx];
+
+    setViewport((prev) => ({
+      ...prev,
+      zoom: stop.zoom,
+      x: stop.x,
+      y: stop.y,
+      activeLabel: stop.title,
+      isAutoAnimating: true,
+    }));
+  };
+
   // Ambient sound toggle
   const handleToggleAmbient = () => {
     const isNowPlaying = ambientAudio.toggle();
@@ -141,6 +228,8 @@ function App() {
       <GalleryHeader
         currentArtwork={currentArtwork}
         onSelectArtwork={handleSelectArtwork}
+        onStartTour={() => handleStartTour()}
+        isTourActive={Boolean(activeTour)}
         ambientPlaying={ambientPlaying}
         onToggleAmbient={handleToggleAmbient}
         onOpenSalonModal={() => setIsSalonModalOpen(true)}
@@ -162,6 +251,17 @@ function App() {
             onCanvasClickCoordinate={handleCanvasClickCoordinate}
             onSelectFocalPoint={handleSelectFocalPoint}
           />
+
+          {/* Active Guided Tour Player */}
+          {activeTour && (
+            <TourPlayer
+              tour={activeTour}
+              currentStopIndex={tourStopIndex}
+              onNextStop={handleNextTourStop}
+              onPrevStop={handlePrevTourStop}
+              onEndTour={() => setActiveTour(null)}
+            />
+          )}
         </main>
 
         {/* Right: Virtual Docent Attention Chat Panel */}
