@@ -15,6 +15,7 @@ interface ArtworkInfoPanelProps {
   onClose: () => void;
   onSelectFocalPoint: (fp: FocalPoint) => void;
   onStartTour: (tour: GuidedTour) => void;
+  initialTab?: 'overview' | 'focal' | 'palette' | 'tours';
 }
 
 export const ArtworkInfoPanel: React.FC<ArtworkInfoPanelProps> = ({
@@ -23,8 +24,13 @@ export const ArtworkInfoPanel: React.FC<ArtworkInfoPanelProps> = ({
   onClose,
   onSelectFocalPoint,
   onStartTour,
+  initialTab,
 }) => {
-  const [activeTab, setActiveTab] = useState<'overview' | 'focal' | 'palette' | 'tours'>('overview');
+  const [activeTab, setActiveTab] = useState<'overview' | 'focal' | 'palette' | 'tours'>(initialTab || 'overview');
+
+  React.useEffect(() => {
+    if (initialTab) setActiveTab(initialTab);
+  }, [initialTab]);
 
   if (!isOpen) return null;
 

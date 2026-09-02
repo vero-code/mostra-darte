@@ -33,6 +33,7 @@ function App() {
   const [pendingCoordQuery, setPendingCoordQuery] = useState<{ x: number; y: number } | null>(null);
 
   const [isInfoOpen, setIsInfoOpen] = useState(false);
+  const [infoTab, setInfoTab] = useState<'overview' | 'focal' | 'palette' | 'tours'>('overview');
   const [isSalonModalOpen, setIsSalonModalOpen] = useState(false);
   const [activeTour, setActiveTour] = useState<GuidedTour | null>(null);
   const [tourStopIndex, setTourStopIndex] = useState(0);
@@ -262,6 +263,12 @@ function App() {
     }
   };
 
+  // Toggle Dossier from WebMCP
+  const handleToggleDossier = useCallback((open: boolean, tab?: 'overview' | 'focal' | 'palette' | 'tours') => {
+    setIsInfoOpen(open);
+    if (tab) setInfoTab(tab);
+  }, []);
+
   // Ambient sound toggle
   const handleToggleAmbient = () => {
     const isNowPlaying = ambientAudio.toggle();
@@ -288,6 +295,7 @@ function App() {
         onToggleAmbient={handleToggleAmbient}
         onOpenSalonModal={() => setIsSalonModalOpen(true)}
         onViewportChange={handleViewportChange}
+        onToggleDossier={handleToggleDossier}
       />
 
       {/* Main Split-Screen Workspace */}
@@ -347,6 +355,7 @@ function App() {
         onClose={() => setIsInfoOpen(false)}
         onSelectFocalPoint={handleSelectFocalPoint}
         onStartTour={handleStartTour}
+        initialTab={infoTab}
       />
 
       {/* Masterpiece Salon Wall Browser Modal */}

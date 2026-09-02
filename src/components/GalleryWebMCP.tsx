@@ -5,6 +5,7 @@ import { MASTERPIECES } from '../data/artworks';
 interface GalleryWebMCPProps {
   currentArtwork?: Artwork;
   onStartTour?: () => void;
+  onToggleDossier?: (open: boolean, tab?: 'overview' | 'focal' | 'palette' | 'tours') => void;
   onViewportChange: (newVp: Partial<ViewportState>) => void;
   onSelectArtwork: (artwork: Artwork) => void;
 }
@@ -14,6 +15,7 @@ export const GalleryWebMCP: React.FC<GalleryWebMCPProps> = ({
   onStartTour,
   onViewportChange,
   onSelectArtwork,
+  onToggleDossier
 }) => {
   const [isSupported, setIsSupported] = useState(false);
   const [isRegistered, setIsRegistered] = useState(false);
@@ -24,6 +26,9 @@ export const GalleryWebMCP: React.FC<GalleryWebMCPProps> = ({
 
   const onStartTourRef = useRef(onStartTour);
   onStartTourRef.current = onStartTour;
+
+  const onToggleDossierRef = useRef(onToggleDossier);
+  onToggleDossierRef.current = onToggleDossier;
 
   useEffect(() => {
     if (typeof document === 'undefined' || !document.modelContext) {
@@ -314,6 +319,50 @@ export const GalleryWebMCP: React.FC<GalleryWebMCPProps> = ({
           annotations: {
             readOnlyHint: true,
           },
+        },
+        { signal: controller.signal }
+      )?.catch?.((err: any) => {
+        if (err?.name !== 'AbortError') console.error(err);
+      });
+
+      // Tool 7: Toggle Curatorial Dossier
+      document.modelContext.registerTool(
+        {
+          name: "toggle_curatorial_dossier",
+          title: "Toggle Curatorial Dossier",
+          description: "Opens or closes the curatorial dossier slide-out panel, optionally switching to a specific tab: 'overview', 'palette' (pigments & color analysis), 'focal' (focal points), or 'tours'.",
+          inputSchema: {
+            type: "object",
+            properties: {
+              open: {
+                type: "boolean",
+                description: "True to open the dossier panel, false to close it."
+              },
+              tab: {
+                type: "string",
+                description: "Optional tab to display: 'overview', 'palette', 'focal', or 'tours'.",
+                enum: ["overview", "palette", "focal", "tours"]
+              }
+            },
+            required: ["open"]
+          },
+          execute: async (
+            { open, tab }: any,
+            { signal }: { signal?: AbortSignal } = {}
+          ) => {
+            if (signal?.aborted) return "Dossier toggle cancelled.";
+
+            if (onToggleDossierRef.current) {
+              onToggleDossierRef.current(Boolean(open), tab);
+              return open
+                ? `Curatorial dossier opened${tab ? ` on the "${tab}" tab` : ''}.`
+                : "Curatorial dossier closed.";
+            }
+            return "Dossier controller unavailable.";
+          },
+          annotations: {
+            readOnlyHint: true,
+          }
         },
         { signal: controller.signal }
       )?.catch?.((err: any) => {
