@@ -27,6 +27,7 @@ interface GalleryHeaderProps {
   onViewportChange: (newVp: Partial<ViewportState>) => void;
   onToggleDossier?: (open: boolean, tab?: 'overview' | 'focal' | 'palette' | 'tours') => void;
   onReservePass?: (pass: BookingPass) => void;
+  onToggleSalon?: (open: boolean) => void;
 }
 
 export const GalleryHeader: React.FC<GalleryHeaderProps> = ({
@@ -42,6 +43,7 @@ export const GalleryHeader: React.FC<GalleryHeaderProps> = ({
   onViewportChange,
   onToggleDossier,
   onReservePass,
+  onToggleSalon,
 }) => {
   const [dropdownOpen, setDropdownOpen] = useState(false);
 
@@ -147,6 +149,7 @@ export const GalleryHeader: React.FC<GalleryHeaderProps> = ({
           onToggleDossier={onToggleDossier}
           onToggleAmbient={onToggleAmbient}
           onReservePass={onReservePass}
+          onToggleSalon={onToggleSalon}
         />
 
         {/* Salon Wall Browser */}

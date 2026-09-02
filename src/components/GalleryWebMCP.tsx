@@ -14,6 +14,7 @@ interface GalleryWebMCPProps {
   onToggleDossier?: (open: boolean, tab?: 'overview' | 'focal' | 'palette' | 'tours') => void;
   onToggleAmbient?: (forceActive?: boolean) => void;
   onReservePass?: (pass: BookingPass) => void;
+  onToggleSalon?: (open: boolean) => void;
 }
 
 export const GalleryWebMCP: React.FC<GalleryWebMCPProps> = ({
@@ -24,6 +25,7 @@ export const GalleryWebMCP: React.FC<GalleryWebMCPProps> = ({
   onToggleDossier,
   onToggleAmbient,
   onReservePass,
+  onToggleSalon,
 }) => {
   const [isSupported, setIsSupported] = useState(false);
   const [isRegistered, setIsRegistered] = useState(false);
@@ -43,6 +45,9 @@ export const GalleryWebMCP: React.FC<GalleryWebMCPProps> = ({
 
   const onReservePassRef = useRef(onReservePass);
   onReservePassRef.current = onReservePass;
+
+  const onToggleSalonRef = useRef(onToggleSalon);
+  onToggleSalonRef.current = onToggleSalon;
 
   useEffect(() => {
     if (typeof document === 'undefined' || !document.modelContext) {
@@ -507,6 +512,45 @@ export const GalleryWebMCP: React.FC<GalleryWebMCPProps> = ({
             const isEnabled = Boolean(active);
             onViewportChange({ gridActive: isEnabled });
             return `Golden ratio composition grid ${isEnabled ? 'activated' : 'deactivated'} on canvas.`;
+          },
+          annotations: {
+            readOnlyHint: true,
+          }
+        },
+        { signal: controller.signal }
+      )?.catch?.((err: any) => {
+        if (err?.name !== 'AbortError') console.error(err);
+      });
+
+      // Tool 11: Open Salon Wall Browser
+      document.modelContext.registerTool(
+        {
+          name: "open_salon_browser",
+          title: "Browse Masterpiece Salon Wall",
+          description: "Opens or closes the full-screen Salon Gallery Wall browser displaying all canonical masterpieces in architectural gilded frames.",
+          inputSchema: {
+            type: "object",
+            properties: {
+              open: {
+                type: "boolean",
+                description: "True to open the Salon Wall modal, false to close it."
+              }
+            },
+            required: ["open"]
+          },
+          execute: async (
+            { open }: any,
+            { signal }: { signal?: AbortSignal } = {}
+          ) => {
+            if (signal?.aborted) return "Salon toggle cancelled.";
+
+            if (onToggleSalonRef.current) {
+              onToggleSalonRef.current(Boolean(open));
+              return open
+                ? "Masterpiece Salon Wall gallery opened on screen."
+                : "Masterpiece Salon Wall gallery closed.";
+            }
+            return "Salon controller unavailable.";
           },
           annotations: {
             readOnlyHint: true,

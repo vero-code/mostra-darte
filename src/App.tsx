@@ -273,6 +273,11 @@ function App() {
     if (tab) setInfoTab(tab);
   }, []);
 
+  // Toggle Salon Wall Modal
+  const handleToggleSalon = useCallback((open: boolean) => {
+    setIsSalonModalOpen(open);
+  }, []);
+
   // Handle Exhibition Booking
   const handleReservePass = useCallback((pass: BookingPass) => {
     setBookingPass(pass);
@@ -318,6 +323,7 @@ function App() {
         onViewportChange={handleViewportChange}
         onToggleDossier={handleToggleDossier}
         onReservePass={handleReservePass}
+        onToggleSalon={handleToggleSalon}
       />
 
       {/* Main Split-Screen Workspace */}
