@@ -1,4 +1,5 @@
 import { useState, useEffect, useCallback } from 'react';
+import { MessageSquare, Eye } from 'lucide-react';
 import type {
   Artwork,
   ChatMessage,
@@ -331,6 +332,35 @@ function App() {
         onReservePass={handleReservePass}
         onToggleSalon={handleToggleSalon}
       />
+
+      {/* Mobile View Switcher Tab Bar */}
+      <div className="md:hidden flex border-b border-stone-800 bg-stone-950 text-xs shrink-0 z-20">
+        <button
+          onClick={() => setActiveTabMobile('canvas')}
+          className={`flex-1 py-2 text-center font-medium flex items-center justify-center gap-1.5 ${
+            activeTabMobile === 'canvas'
+              ? 'text-amber-300 border-b-2 border-amber-400 bg-stone-900/60'
+              : 'text-stone-400'
+          }`}
+        >
+          <Eye className="w-3.5 h-3.5" />
+          Master Canvas
+        </button>
+        <button
+          onClick={() => setActiveTabMobile('docent')}
+          className={`flex-1 py-2 text-center font-medium flex items-center justify-center gap-1.5 ${
+            activeTabMobile === 'docent'
+              ? 'text-amber-300 border-b-2 border-amber-400 bg-stone-900/60'
+              : 'text-stone-400'
+          }`}
+        >
+          <MessageSquare className="w-3.5 h-3.5" />
+          Virtual Docent
+          {messages.length > 1 && (
+            <span className="w-1.5 h-1.5 rounded-full bg-amber-400" />
+          )}
+        </button>
+      </div>
 
       {/* Main Split-Screen Workspace */}
       <div className="flex-1 flex overflow-hidden relative">
