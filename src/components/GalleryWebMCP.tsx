@@ -13,6 +13,7 @@ export const GalleryWebMCP: React.FC<GalleryWebMCPProps> = ({
 }) => {
   const [isSupported, setIsSupported] = useState(false);
   const [isRegistered, setIsRegistered] = useState(false);
+  const [toolCount, setToolCount] = useState<number>(0);
 
   useEffect(() => {
     if (typeof document === 'undefined' || !document.modelContext) {
@@ -22,6 +23,19 @@ export const GalleryWebMCP: React.FC<GalleryWebMCPProps> = ({
 
     setIsSupported(true);
     const controller = new AbortController();
+
+    // WebMCP tool change listener
+    const handleToolChange = async () => {
+      try {
+        const tools = await document.modelContext.getTools();
+        setToolCount(tools.length);
+        if (tools.length > 0) setIsRegistered(true);
+      } catch (err) {
+        console.error("Error reading tools:", err);
+      }
+    };
+    document.modelContext.addEventListener("toolchange", handleToolChange);
+    handleToolChange();
 
     // WebMCP tool registration
     try {
@@ -200,8 +214,10 @@ export const GalleryWebMCP: React.FC<GalleryWebMCPProps> = ({
     }
 
     return () => {
+      document.modelContext.removeEventListener("toolchange", handleToolChange);
       controller.abort();
       setIsRegistered(false);
+      setToolCount(0);
     };
   }, [onViewportChange, onSelectArtwork]);
 
@@ -210,7 +226,7 @@ export const GalleryWebMCP: React.FC<GalleryWebMCPProps> = ({
       <span className={`w-2 h-2 rounded-full ${isSupported && isRegistered ? 'bg-emerald-400 animate-pulse' : 'bg-amber-400'}`} />
       <span>
         {isSupported && isRegistered
-          ? 'WebMCP: 4 Tools Active'
+          ? `WebMCP: ${toolCount > 0 ? `${toolCount} Tools` : 'Tools'} Active`
           : isSupported
           ? 'WebMCP: Initializing...'
           : 'WebMCP: Ready (Waiting for Chrome Agent)'}
