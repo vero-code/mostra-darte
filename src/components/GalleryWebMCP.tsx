@@ -1,19 +1,24 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import type { Artwork, ViewportState } from '../types';
 import { MASTERPIECES } from '../data/artworks';
 
 interface GalleryWebMCPProps {
+  currentArtwork?: Artwork;
   onViewportChange: (newVp: Partial<ViewportState>) => void;
   onSelectArtwork: (artwork: Artwork) => void;
 }
 
 export const GalleryWebMCP: React.FC<GalleryWebMCPProps> = ({
+  currentArtwork,
   onViewportChange,
   onSelectArtwork,
 }) => {
   const [isSupported, setIsSupported] = useState(false);
   const [isRegistered, setIsRegistered] = useState(false);
   const [toolCount, setToolCount] = useState<number>(0);
+
+  const currentArtworkRef = useRef(currentArtwork);
+  currentArtworkRef.current = currentArtwork;
 
   useEffect(() => {
     if (typeof document === 'undefined' || !document.modelContext) {
@@ -202,6 +207,66 @@ export const GalleryWebMCP: React.FC<GalleryWebMCPProps> = ({
           annotations: {
             readOnlyHint: true,
           },
+        },
+        { signal: controller.signal }
+      )?.catch?.((err: any) => {
+        if (err?.name !== 'AbortError') console.error(err);
+      });
+
+      // Tool 5: Get Curatorial Artwork Insights
+      document.modelContext.registerTool(
+        {
+          name: "get_artwork_details",
+          title: "Get Curatorial Artwork Insights",
+          description: "Returns curatorial analysis, historical provenance, palette symbolism, and notable focal coordinates of an artwork. Provide artwork_id, or omit to query the currently exhibited painting.",
+          inputSchema: {
+            type: "object",
+            properties: {
+              artwork_id: {
+                type: "string",
+                description: "Optional ID of the artwork to inspect. If omitted, returns current painting.",
+                enum: [
+                  "starry-night",
+                  "mona-lisa",
+                  "girl-pearl-earring",
+                  "the-kiss",
+                  "birth-of-venus",
+                  "great-wave",
+                  "creation-of-adam"
+                ]
+              }
+            }
+          },
+          execute: async (
+            { artwork_id }: any,
+            { signal }: { signal?: AbortSignal } = {}
+          ) => {
+            if (signal?.aborted) return "Query cancelled.";
+
+            const active = currentArtworkRef.current || MASTERPIECES[0];
+            const target = artwork_id
+              ? MASTERPIECES.find(m => m.id === artwork_id) || active
+              : active;
+
+            return {
+              id: target.id,
+              title: target.title,
+              artist: target.artist,
+              year: target.year,
+              period: target.period,
+              location: target.location,
+              curatorOverview: target.curatorOverview,
+              palette: target.colorPalette.map(p => `${p.name} (${p.role})`),
+              keyDetails: target.focalPoints.map(fp => ({
+                name: fp.name,
+                coordinates: { x: fp.x, y: fp.y, zoom: fp.zoom },
+                curatorInsight: fp.curatorInsight
+              }))
+            };
+          },
+          annotations: {
+            readOnlyHint: true,
+          }
         },
         { signal: controller.signal }
       )?.catch?.((err: any) => {

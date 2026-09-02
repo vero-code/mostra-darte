@@ -122,6 +122,7 @@ export const GalleryHeader: React.FC<GalleryHeaderProps> = ({
       <div className="flex items-center gap-2 md:gap-3">
         {/* WebMCP indicator */}
         <GalleryWebMCP
+          currentArtwork={currentArtwork}
           onViewportChange={onViewportChange}
           onSelectArtwork={onSelectArtwork}
         />
