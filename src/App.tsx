@@ -56,7 +56,7 @@ function App() {
     const welcomeMessage: ChatMessage = {
       id: 'welcome-1',
       role: 'assistant',
-      content: `Welcome to **Mostra d'Arte**, esteemed visitor. I am your Head Curator and Virtual Docent.\n\nHere, we explore art history not merely through passive viewing, but through dynamic direction of attention. Before us hangs Vincent van Gogh's transcendent **${currentArtwork.title}** (1889).\n\nNotice the ecstatic swirl of cosmic energy and earthly melancholy. I can physically steer your view to any brushstroke or hidden symbol. What captures your curiosity? Ask me any question, or tap directly onto the canvas!`,
+      content: `Welcome to **Mostra d'Arte**, esteemed visitor. I am your Head Curator and Virtual Docent.\n\nHere, we explore art history not through passive viewing, but through dynamic, agent-native direction of attention. Before us hangs Vincent van Gogh's transcendent **${currentArtwork.title}** (${currentArtwork.year}).\n\nNotice the ecstatic swirl of cosmic energy and earthly melancholy. Instruct your browser's AI Agent via **WebMCP** to steer the camera, explore the curatorial dossier, or launch an automated guided tour!`,
       timestamp: Date.now(),
     };
     setMessages([welcomeMessage]);
