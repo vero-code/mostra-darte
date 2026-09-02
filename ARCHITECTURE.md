@@ -241,4 +241,5 @@ In accordance with Google Chrome WebMCP Security Guidelines:
 - **Chrome Status**: [Feature #5117755740913664](https://chromestatus.com/feature/5117755740913664)
 - **Chromium Origin Trial**: ID `4163014905550602241`
 - **Testing Flag**: `chrome://flags/#enable-webmcp-testing`
+- **Chrome DevTools Debugger**: [Debug WebMCP tools in Chrome DevTools](https://developer.chrome.com/docs/devtools/application/webmcp)
 - **Official Testing Extension**: [Model Context Tool Inspector](https://chromewebstore.google.com/detail/model-context-tool-inspec/gbpdfapgefenggkahomfgkhfehlcenpd)

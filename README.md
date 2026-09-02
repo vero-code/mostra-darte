@@ -98,18 +98,31 @@ Mostra d'Arte strictly adheres to the **[W3C Web Machine Learning Working Draft]
 
 ## 🧪 Testing with WebMCP (Judge Guide)
 
-You can test the agent tools in two simple steps:
+You can test and actuate the gallery tools using two official Google methods:
 
-### Step 1: Enable WebMCP in Chrome
+### Prerequisite: Enable WebMCP in Chrome
 1. In Google Chrome, navigate to `chrome://flags/#enable-webmcp-testing`.
 2. Set the flag to **Enabled** and relaunch Chrome.
 *(Official Origin Trial ID: `4163014905550602241`)*
 
-### Step 2: Test via Model Context Tool Inspector Extension
+---
+
+### Method A: Native Chrome DevTools WebMCP Panel (Zero Extension Required!)
+Chrome includes a dedicated [WebMCP DevTools Debugger](https://developer.chrome.com/docs/devtools/application/webmcp) built directly into the Application panel:
+1. Open **Mostra d'Arte** in Chrome.
+2. Press `F12` to open **Chrome DevTools**.
+3. Go to the **Application** tab, and select **WebMCP** from the left sidebar.
+4. Under **Available Tools**, click any tool (e.g. `switch_masterpiece`, `zoom_painting`, `toggle_spotlight`).
+5. In the **Run Tool** pane on the right, enter parameters (e.g. `artwork_id: mona-lisa`), click **Run tool**, and watch the React canvas actuate live with real-time `Completed` logs!
+
+---
+
+### Method B: Conversational AI via Model Context Tool Inspector Extension
 1. Install the official **[Model Context Tool Inspector Extension](https://chromewebstore.google.com/detail/model-context-tool-inspec/gbpdfapgefenggkahomfgkhfehlcenpd)** from the Chrome Web Store.
 2. Open **Mostra d'Arte** in Chrome.
 3. Open the extension side panel — you will immediately see all **11 WebMCP tools** detected automatically.
-4. Try these verified agent prompts covering all 11 tools:
+4. **Verified Evals & Benchmark Suite (Google Evals Framework):**  
+   Run these 11 verified benchmark prompts to test model tool selection, parameter binding, and real-time UI actuation:
 
 | # | Target WebMCP Tool | Verified Agent Prompt | Expected UI Actuation |
 |:---|:---|:---|:---|
