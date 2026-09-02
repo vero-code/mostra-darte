@@ -5,6 +5,7 @@ import {
   // Send,
   Sparkles,
   Volume2,
+  VolumeX,
   Compass,
   // ArrowUpRight,
   // HelpCircle,
@@ -20,6 +21,8 @@ interface DocentChatProps {
   onSendMessage: (text: string, coordQuery?: { x: number; y: number }) => void;
   pendingCoordQuery: { x: number; y: number } | null;
   onClearCoordQuery: () => void;
+  voiceEnabled: boolean;
+  onToggleVoice: () => void;
 }
 
 export const DocentChat: React.FC<DocentChatProps> = ({
@@ -29,6 +32,8 @@ export const DocentChat: React.FC<DocentChatProps> = ({
   // onSendMessage,
   pendingCoordQuery,
   onClearCoordQuery,
+  voiceEnabled,
+  onToggleVoice,
 }) => {
   const [, setInputText] = useState('');
   const [isSpeaking, setIsSpeaking] = useState(false);
@@ -104,6 +109,22 @@ export const DocentChat: React.FC<DocentChatProps> = ({
               {isThinking ? 'Examining brushstrokes...' : isSpeaking ? 'Speaking in gallery...' : 'Guiding Mostra d\'Arte'}
             </p>
           </div>
+        </div>
+
+        {/* Header Actions */}
+        <div className="flex items-center gap-1.5">
+          <button
+            id="btn-voice-toggle"
+            title={voiceEnabled ? 'Mute Docent Narration' : 'Enable Voice Narration'}
+            onClick={onToggleVoice}
+            className={`p-2 rounded-lg transition-colors ${
+              voiceEnabled
+                ? 'bg-amber-500/20 text-amber-300 border border-amber-500/40'
+                : 'hover:bg-stone-800 text-stone-400 hover:text-stone-200'
+            }`}
+          >
+            {voiceEnabled ? <Volume2 className="w-4 h-4" /> : <VolumeX className="w-4 h-4" />}
+          </button>
         </div>
       </div>
 

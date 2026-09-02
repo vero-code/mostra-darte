@@ -13,6 +13,7 @@ import { GalleryHeader } from './components/GalleryHeader.tsx';
 import { MasterpieceModal } from './components/MasterpieceModal.tsx';
 import { TourPlayer } from './components/TourPlayer.tsx';
 import { ambientAudio } from './utils/ambientAudio';
+import { docentSpeech } from './utils/speech';
 
 function App() {
   const [currentArtwork, setCurrentArtwork] = useState<Artwork>(MASTERPIECES[0]);
@@ -35,6 +36,7 @@ function App() {
   const [tourStopIndex, setTourStopIndex] = useState(0);
 
   const [ambientPlaying, setAmbientPlaying] = useState(false);
+  const [voiceEnabled, setVoiceEnabled] = useState(true);
   const [activeTabMobile, setActiveTabMobile] = useState<'canvas' | 'docent'>('canvas');
 
   // Initial Curatorial Welcome Message
@@ -93,6 +95,11 @@ function App() {
       };
 
       setMessages((prev) => [...prev, assistantMessage]);
+
+      // Voice Narration
+      if (voiceEnabled && data.content) {
+        docentSpeech.speak(data.content);
+      }
     } catch (err) {
       console.error('Error contacting docent:', err);
       const errorMessage: ChatMessage = {
@@ -131,6 +138,28 @@ function App() {
   const handleSelectArtwork = (artwork: Artwork) => {
     if (artwork.id === currentArtwork.id) return;
     setCurrentArtwork(artwork);
+    setActiveTour(null);
+    setViewport({
+      zoom: 1,
+      x: 50,
+      y: 50,
+      isAutoAnimating: true,
+      spotlightActive: false,
+      loupeActive: false,
+      gridActive: false,
+    });
+
+    const switchMsg: ChatMessage = {
+      id: `switch-${Date.now()}`,
+      role: 'assistant',
+      content: `We now step into the presence of **${artwork.title}** (${artwork.year}) by **${artwork.artist}**.\n\n${artwork.curatorOverview}\n\nWhere would you like to direct our inquiry first?`,
+      timestamp: Date.now(),
+    };
+    setMessages((prev) => [...prev, switchMsg]);
+
+    if (voiceEnabled) {
+      docentSpeech.speak(switchMsg.content);
+    }
   };
 
   // Start Guided Tour
@@ -159,6 +188,10 @@ function App() {
         timestamp: Date.now(),
       };
       setMessages((prev) => [...prev, tourMsg]);
+
+      if (voiceEnabled) {
+        docentSpeech.speak(firstStop.narrative);
+      }
     }
   };
 
@@ -186,6 +219,10 @@ function App() {
         timestamp: Date.now(),
       };
       setMessages((prev) => [...prev, tourMsg]);
+
+      if (voiceEnabled) {
+        docentSpeech.speak(stop.narrative);
+      }
     } else {
       // Tour completed
       setActiveTour(null);
@@ -196,6 +233,9 @@ function App() {
         timestamp: Date.now(),
       };
       setMessages((prev) => [...prev, finishMsg]);
+      if (voiceEnabled) {
+        docentSpeech.speak(finishMsg.content);
+      }
     }
   };
 
@@ -214,12 +254,22 @@ function App() {
       activeLabel: stop.title,
       isAutoAnimating: true,
     }));
+
+    if (voiceEnabled) {
+      docentSpeech.speak(stop.narrative);
+    }
   };
 
   // Ambient sound toggle
   const handleToggleAmbient = () => {
     const isNowPlaying = ambientAudio.toggle();
     setAmbientPlaying(isNowPlaying);
+  };
+
+  // Voice toggle
+  const handleToggleVoice = () => {
+    const muted = docentSpeech.toggleMute();
+    setVoiceEnabled(!muted);
   };
 
   return (
@@ -259,7 +309,10 @@ function App() {
               currentStopIndex={tourStopIndex}
               onNextStop={handleNextTourStop}
               onPrevStop={handlePrevTourStop}
-              onEndTour={() => setActiveTour(null)}
+              onEndTour={() => {
+                setActiveTour(null);
+                docentSpeech.stop();
+              }}
             />
           )}
         </main>
@@ -277,6 +330,8 @@ function App() {
             onSendMessage={handleSendMessage}
             pendingCoordQuery={pendingCoordQuery}
             onClearCoordQuery={() => setPendingCoordQuery(null)}
+            voiceEnabled={voiceEnabled}
+            onToggleVoice={handleToggleVoice}
           />
         </aside>
       </div>
