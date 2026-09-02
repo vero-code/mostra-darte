@@ -39,7 +39,12 @@ export const GalleryWebMCP: React.FC<GalleryWebMCPProps> = ({
             },
             required: ["x", "y", "zoom"],
           },
-          execute: async ({ x, y, zoom, detail_name }: any) => {
+          execute: async (
+            { x, y, zoom, detail_name }: any,
+            { signal }: { signal?: AbortSignal } = {}
+          ) => {
+            if (signal?.aborted) return "Zoom operation cancelled.";
+
             onViewportChange({
               x: Math.max(0, Math.min(100, Number(x))),
               y: Math.max(0, Math.min(100, Number(y))),
@@ -86,7 +91,12 @@ export const GalleryWebMCP: React.FC<GalleryWebMCPProps> = ({
             },
             required: ["artwork_id"],
           },
-          execute: async ({ artwork_id }: any) => {
+          execute: async (
+            { artwork_id }: any,
+            { signal }: { signal?: AbortSignal } = {}
+          ) => {
+            if (signal?.aborted) return "Masterpiece switch cancelled.";
+
             const cleanId = String(artwork_id || '').toLowerCase().trim();
             const target = MASTERPIECES.find(
               (m) => m.id.toLowerCase() === cleanId || m.title.toLowerCase().includes(cleanId)
@@ -121,7 +131,12 @@ export const GalleryWebMCP: React.FC<GalleryWebMCPProps> = ({
               },
             },
           },
-          execute: async () => {
+          execute: async (
+            _input: any,
+            { signal }: { signal?: AbortSignal } = {}
+          ) => {
+            if (signal?.aborted) return "Reset view cancelled.";
+
             onViewportChange({
               zoom: 1,
               x: 50,
@@ -155,7 +170,12 @@ export const GalleryWebMCP: React.FC<GalleryWebMCPProps> = ({
             },
             required: ["active"],
           },
-          execute: async ({ active }: any) => {
+          execute: async (
+            { active }: any,
+            { signal }: { signal?: AbortSignal } = {}
+          ) => {
+            if (signal?.aborted) return "Spotlight toggle cancelled.";
+
             const isEnabled = Boolean(active);
             onViewportChange({ spotlightActive: isEnabled });
             return `Gallery spotlight dramatically ${isEnabled ? 'activated' : 'deactivated'}.`;
