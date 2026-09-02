@@ -226,10 +226,12 @@ sequenceDiagram
 
 ## 6. Security & Intent Declarations
 
-In accordance with WebMCP Section 4.2.1:
-- **`readOnlyHint: true`**: Declared on 10 out of 11 tools (`zoom_painting`, `switch_masterpiece`, `get_artwork_details`, etc.). This signals to the browser agent that executions do not modify external user data or incur financial charges, allowing seamless chained exploration without repetitive permission prompts.
-- **Explicit Transactional Action**: `reserve_gallery_pass` intentionally omits `readOnlyHint`, signaling a transactional state transition that displays a prominent visual confirmation pass on the visitor's screen.
-- **Client-Side Execution Boundary**: All WebMCP tools run entirely in client memory. No telemetry, prompt logs, or personal data are transmitted to external servers.
+In accordance with Google Chrome WebMCP Security Guidelines:
+- **`readOnlyHint: true`**: Declared on 10 out of 11 tools. Signals that executions are safe and non-destructive, avoiding annoying confirmation popups.
+- **Explicit Transactional Action**: `reserve_gallery_pass` omits `readOnlyHint` because it books a VIP admission pass and renders a ticket on screen.
+- **Chrome Character Budgets**: All tool names (<30 chars), descriptions (<500 chars), and outputs (<1.5 KB) strictly follow Google's character budgets to prevent LLM context overflow.
+- **Prompt Injection Defense**: All art facts and descriptions are vetted local museum archives, protecting the AI agent from malicious indirect prompt injections.
+- **Local Client Boundary**: Everything runs 100% inside client memory with zero server telemetry or data tracking.
 
 ---
 
