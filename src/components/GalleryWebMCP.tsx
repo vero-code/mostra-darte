@@ -1,5 +1,9 @@
 import React, { useEffect, useState, useRef } from 'react';
-import type { Artwork, ViewportState } from '../types';
+import type {
+  Artwork,
+  ViewportState,
+  BookingPass,
+} from '../types';
 import { MASTERPIECES } from '../data/artworks';
 
 interface GalleryWebMCPProps {
@@ -9,6 +13,7 @@ interface GalleryWebMCPProps {
   onSelectArtwork: (artwork: Artwork) => void;
   onToggleDossier?: (open: boolean, tab?: 'overview' | 'focal' | 'palette' | 'tours') => void;
   onToggleAmbient?: (forceActive?: boolean) => void;
+  onReservePass?: (pass: BookingPass) => void;
 }
 
 export const GalleryWebMCP: React.FC<GalleryWebMCPProps> = ({
@@ -18,6 +23,7 @@ export const GalleryWebMCP: React.FC<GalleryWebMCPProps> = ({
   onSelectArtwork,
   onToggleDossier,
   onToggleAmbient,
+  onReservePass,
 }) => {
   const [isSupported, setIsSupported] = useState(false);
   const [isRegistered, setIsRegistered] = useState(false);
@@ -34,6 +40,9 @@ export const GalleryWebMCP: React.FC<GalleryWebMCPProps> = ({
 
   const onToggleAmbientRef = useRef(onToggleAmbient);
   onToggleAmbientRef.current = onToggleAmbient;
+
+  const onReservePassRef = useRef(onReservePass);
+  onReservePassRef.current = onReservePass;
 
   useEffect(() => {
     if (typeof document === 'undefined' || !document.modelContext) {
@@ -407,6 +416,66 @@ export const GalleryWebMCP: React.FC<GalleryWebMCPProps> = ({
           annotations: {
             readOnlyHint: true,
           }
+        },
+        { signal: controller.signal }
+      )?.catch?.((err: any) => {
+        if (err?.name !== 'AbortError') console.error(err);
+      });
+
+      // Tool 9: Reserve Exhibition VIP Pass
+      document.modelContext.registerTool(
+        {
+          name: "reserve_gallery_pass",
+          title: "Reserve Exhibition VIP Pass",
+          description: "Reserves an official VIP admission pass to the gallery exhibition. Produces a confirmed digital pass with booking ID and QR verification.",
+          inputSchema: {
+            type: "object",
+            properties: {
+              visitor_name: {
+                type: "string",
+                description: "Full name of the visitor."
+              },
+              date: {
+                type: "string",
+                description: "Desired date for the exhibition visit (e.g., '2026-09-03' or 'Tomorrow')."
+              },
+              tickets_count: {
+                type: "number",
+                description: "Number of admission passes (1 to 6). Defaults to 1."
+              },
+              session: {
+                type: "string",
+                description: "Exhibition time slot: 'Morning Curatorial Walk', 'Afternoon Salon', or 'Evening VIP & Nocturne'.",
+                enum: ["Morning Curatorial Walk", "Afternoon Salon", "Evening VIP & Nocturne"]
+              }
+            },
+            required: ["visitor_name", "date"]
+          },
+          execute: async (
+            { visitor_name, date, tickets_count = 1, session = "Evening VIP & Nocturne" }: any,
+            { signal }: { signal?: AbortSignal } = {}
+          ) => {
+            if (signal?.aborted) return "Booking cancelled.";
+
+            const active = currentArtworkRef.current || MASTERPIECES[0];
+            const passId = `MDA-2026-${Math.floor(1000 + Math.random() * 9000)}`;
+
+            const pass: BookingPass = {
+              passId,
+              visitorName: visitor_name,
+              date,
+              session,
+              ticketsCount: Number(tickets_count) || 1,
+              artworkTitle: `${active.title} — ${active.artist}`,
+              confirmedAt: Date.now(),
+            };
+
+            if (onReservePassRef.current) {
+              onReservePassRef.current(pass);
+            }
+
+            return `Exhibition VIP Pass confirmed! Pass ID: ${passId}. Visitor: ${visitor_name}. Passes: ${tickets_count}. Date: ${date} (${session}). Digital admission ticket displayed on screen.`;
+          },
         },
         { signal: controller.signal }
       )?.catch?.((err: any) => {

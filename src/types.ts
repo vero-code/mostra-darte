@@ -80,3 +80,13 @@ export interface ViewportState {
   loupeActive: boolean;
   gridActive: boolean;
 }
+
+export interface BookingPass {
+  passId: string;
+  visitorName: string;
+  date: string;
+  session: string;
+  ticketsCount: number;
+  artworkTitle: string;
+  confirmedAt: number;
+}

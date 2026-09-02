@@ -5,6 +5,7 @@ import type {
   FocalPoint,
   GuidedTour,
   ViewportState,
+  BookingPass,
 } from './types';
 import { MASTERPIECES } from './data/artworks';
 import { ArtworkCanvas } from './components/ArtworkCanvas.tsx';
@@ -13,6 +14,7 @@ import { GalleryHeader } from './components/GalleryHeader.tsx';
 import { ArtworkInfoPanel } from './components/ArtworkInfoPanel';
 import { TourPlayer } from './components/TourPlayer.tsx';
 import { MasterpieceModal } from './components/MasterpieceModal.tsx';
+import { BookingPassModal } from './components/BookingPassModal';
 import { ambientAudio } from './utils/ambientAudio';
 import { docentSpeech } from './utils/speech';
 
@@ -41,6 +43,8 @@ function App() {
   const [ambientPlaying, setAmbientPlaying] = useState(false);
   const [voiceEnabled, setVoiceEnabled] = useState(true);
   const [activeTabMobile, setActiveTabMobile] = useState<'canvas' | 'docent'>('canvas');
+
+  const [bookingPass, setBookingPass] = useState<BookingPass | null>(null);
 
   // Initial Curatorial Welcome Message
   useEffect(() => {
@@ -269,6 +273,11 @@ function App() {
     if (tab) setInfoTab(tab);
   }, []);
 
+  // Handle Exhibition Booking
+  const handleReservePass = useCallback((pass: BookingPass) => {
+    setBookingPass(pass);
+  }, []);
+
   // Ambient sound toggle
   const handleToggleAmbient = useCallback((forceActive?: boolean) => {
     let nextPlaying: boolean;
@@ -308,6 +317,7 @@ function App() {
         onOpenSalonModal={() => setIsSalonModalOpen(true)}
         onViewportChange={handleViewportChange}
         onToggleDossier={handleToggleDossier}
+        onReservePass={handleReservePass}
       />
 
       {/* Main Split-Screen Workspace */}
@@ -376,6 +386,12 @@ function App() {
         onClose={() => setIsSalonModalOpen(false)}
         currentArtworkId={currentArtwork.id}
         onSelectArtwork={handleSelectArtwork}
+      />
+
+      {/* Exhibition VIP Booking Pass Modal */}
+      <BookingPassModal
+        pass={bookingPass}
+        onClose={() => setBookingPass(null)}
       />
     </div>
   )

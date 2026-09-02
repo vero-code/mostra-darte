@@ -7,7 +7,11 @@ import {
   Layers,
  } from 'lucide-react';
  import { GalleryWebMCP } from './GalleryWebMCP';
-import type { Artwork, ViewportState } from '../types';
+import type {
+  Artwork,
+  ViewportState,
+  BookingPass,
+} from '../types';
 import { MASTERPIECES } from '../data/artworks';
 
 interface GalleryHeaderProps {
@@ -22,6 +26,7 @@ interface GalleryHeaderProps {
   onOpenSalonModal: () => void;
   onViewportChange: (newVp: Partial<ViewportState>) => void;
   onToggleDossier?: (open: boolean, tab?: 'overview' | 'focal' | 'palette' | 'tours') => void;
+  onReservePass?: (pass: BookingPass) => void;
 }
 
 export const GalleryHeader: React.FC<GalleryHeaderProps> = ({
@@ -35,7 +40,8 @@ export const GalleryHeader: React.FC<GalleryHeaderProps> = ({
   onToggleAmbient,
   onOpenSalonModal,
   onViewportChange,
-  onToggleDossier
+  onToggleDossier,
+  onReservePass,
 }) => {
   const [dropdownOpen, setDropdownOpen] = useState(false);
 
@@ -140,6 +146,7 @@ export const GalleryHeader: React.FC<GalleryHeaderProps> = ({
           onSelectArtwork={onSelectArtwork}
           onToggleDossier={onToggleDossier}
           onToggleAmbient={onToggleAmbient}
+          onReservePass={onReservePass}
         />
 
         {/* Salon Wall Browser */}
