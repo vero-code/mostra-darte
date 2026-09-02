@@ -72,6 +72,9 @@ Conversational queries exhibit natural variance. Mostra d'Arte absorbs this vari
 - **Fuzzy period matching**: Resolving `"Dutch"` to `"Dutch Golden Age"`, and `"Renaissance"` to `"High Renaissance"`.
 - **Defensive mathematical clamping**: Sanitizing coordinates with `Number.isFinite()` to prevent `NaN` viewport crashes.
 
+### 2.5 Initial State Awareness & Contextual Binding
+In alignment with Google's *"Define the Initial State"* methodology, tools maintain constant awareness of the active user viewport and exhibition environment (`currentArtworkRef.current`). When an agent queries `get_artwork_details({})` without arguments, it immediately receives provenance, dimensions, and focal coordinates of the artwork currently displayed on the canvas. Similarly, `start_guided_tour()` automatically launches for the currently exhibited painting, and `reserve_gallery_pass()` binds the active exhibition title to the visitor's digital pass. The agent never operates blind.
+
 ---
 
 ## 3. Subsystem Architecture
