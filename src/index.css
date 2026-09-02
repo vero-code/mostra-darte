@@ -38,3 +38,12 @@
 ::-webkit-scrollbar-thumb:hover {
   background: rgba(217, 119, 6, 0.6);
 }
+
+/* Global Button Cursor */
+button, [role="button"] {
+  cursor: pointer;
+}
+
+button:disabled, [role="button"]:disabled {
+  cursor: not-allowed;
+}
