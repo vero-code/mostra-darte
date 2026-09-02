@@ -21,6 +21,8 @@ Traditional web applications require humans to navigate complex menus, sliders, 
 **Mostra d'Arte inverts this paradigm:**  
 By exposing client-side tools to browser AI agents via `document.modelContext.registerTool()`, the AI transitions from a passive conversationalist into an active **"Director of Attention"** — steering high-precision camera zooms, adjusting museum illumination, playing spatial room acoustics, opening curatorial research dossiers, and even issuing digital VIP admission passes in real time.
 
+> 📐 **Looking for complete protocol specifications, sequence diagrams, and component models? Check out our comprehensive [System Architecture Specification (ARCHITECTURE.md)](ARCHITECTURE.md).**
+
 ---
 
 ## 🧭 Critical User Journeys (CUJ)
@@ -29,19 +31,19 @@ In accordance with Google Chrome's [WebMCP Architecture Guidelines](https://web.
 
 ### 1. 🔍 Spatial Deep-Dive & Canvas Actuation (Art Connoisseur CUJ)
 - **Goal:** The visitor wants to visually understand subtle symbolism, hidden details, and geometric composition without manually panning and pinching.
-- **Agent Prompt:** *"Analyze the geometry of Van Gogh's Starry Night, turn on the composition grid, and zoom in on the cypress tree."*
+- **Verified Agent Prompt:** *"Exhibit the Mona Lisa, turn on the focused spotlight for dramatic atmosphere, and zoom in on her elusive smile."*
 - **Agent Execution Chain:**  
-  `get_artwork_details` ➔ `toggle_composition_grid({ active: true })` ➔ `zoom_painting({ x: 16, y: 58, zoom: 2.8, detail_name: "Towering Cypress" })`.
+  `switch_masterpiece({ artwork_id: "mona-lisa" })` ➔ `toggle_spotlight({ active: true })` ➔ `zoom_painting({ x: 50, y: 35, zoom: 3.5, detail_name: "Elusive Smile" })`.
 
 ### 2. 🏛️ Collection Filtration & Exhibition Curation (Curatorial CUJ)
-- **Goal:** The visitor explores works across specific art historical movements and periods (e.g. Dutch Golden Age, High Renaissance, Vienna Secession).
-- **Agent Prompt:** *"Show me all masterpieces from the Dutch Golden Age in the salon."*
+- **Goal:** The visitor explores the canonical collection on the grand salon wall.
+- **Verified Agent Prompt:** *"Show me the entire gallery collection on the salon wall"*
 - **Agent Execution Chain:**  
-  `open_salon_browser({ open: true, period: "Dutch Golden Age" })` ➔ `switch_masterpiece({ artwork_id: "girl-pearl-earring" })`.
+  `open_salon_browser({ open: true })`.
 
 ### 3. 🎟️ Transactional VIP Exhibition Reservation (Service & Booking CUJ)
 - **Goal:** The visitor wants to book real-world admission tickets through the agent conversation without filling out complex multi-page booking forms.
-- **Agent Prompt:** *"Reserve 2 VIP evening passes for Alice tomorrow."*
+- **Verified Agent Prompt:** *"Book 2 VIP passes for Alice on tomorrow's evening session"*
 - **Agent Execution Chain:**  
   `reserve_gallery_pass({ visitor_name: "Alice", tickets_count: 2, date: "Tomorrow", session: "Evening VIP & Nocturne" })` ➔ Generates official digital VIP pass modal with confirmation ID and QR verification on screen.
 
@@ -104,11 +106,21 @@ You can test the agent tools in two simple steps:
 1. Install the official **[Model Context Tool Inspector Extension](https://chromewebstore.google.com/detail/model-context-tool-inspec/gbpdfapgefenggkahomfgkhfehlcenpd)** from the Chrome Web Store.
 2. Open **Mostra d'Arte** in Chrome.
 3. Open the extension side panel — you will immediately see all **11 WebMCP tools** detected automatically.
-4. Try these multi-tool agentic prompts:
-   - *"Show me all masterpieces from the Dutch Golden Age in the salon."*
-   - *"Turn on the background gallery acoustics, overlay the composition grid, and zoom in on Van Gogh's crescent moon."*
-   - *"Book 2 VIP evening passes for Sarah Connor tomorrow."*
-   - *"Show me the color palette and pigments used in The Kiss."*
+4. Try these verified agent prompts covering all 11 tools:
+
+| # | Target WebMCP Tool | Verified Agent Prompt | Expected UI Actuation |
+|:---|:---|:---|:---|
+| 1️⃣ | **`zoom_painting`** | *"Show me the details of the moon in this painting"* | Camera glides and magnifies canvas details |
+| 2️⃣ | **`switch_masterpiece`** | *"Show me Mona Lisa"* | Wall exhibition mounts the requested masterpiece |
+| 3️⃣ | **`reset_view`** | *"Zoom in on the smile, then reset the view to see the whole painting"* | Zooms into detail, then smoothly restores 1.0x wide canvas |
+| 4️⃣ | **`toggle_spotlight`** | *"Zoom in on the moon and turn on the spotlight to highlight the painting."*<br/>*"Exhibit the Mona Lisa, turn on the focused spotlight for dramatic atmosphere, and zoom in on her elusive smile."* | Radial vignette darkens surroundings for museum atmosphere |
+| 5️⃣ | **`get_artwork_details`** | *"Tell me the historical background and key focal points of this painting, then zoom in on the most symbolic detail."* | Retrieves provenance & archives, then steers camera |
+| 6️⃣ | **`start_guided_tour`** | *"Please start a guided tour of this painting"* | Launches autonomous waypoint tour with voice narration |
+| 7️⃣ | **`toggle_curatorial_dossier`** | *"What pigments and colors did Van Gogh use for this sky? Show me the palette."*<br/>*"Show me the color palette and pigments used in this masterpiece"*<br/>*"Close the dossier and return to full canvas"* | Slides out research drawer on Palette; closes on command |
+| 8️⃣ | **`toggle_ambient_acoustics`** | *"Turn on the gallery ambient music to set a contemplative mood."*<br/>*"Mute the gallery ambient sound."* | Web Audio synthesizer starts or mutes gallery acoustics |
+| 9️⃣ | **`reserve_gallery_pass`** | *"Book 2 VIP passes for Alice on tomorrow's evening session"* | Generates verified digital VIP pass modal with QR badge |
+| 🔟 | **`toggle_composition_grid`** | *"Analyze the geometric balance of this painting and show the composition grid."*<br/>*"Hide the composition grid."* | Displays or hides Golden Ratio dynamic geometric overlay |
+| 1️⃣1️⃣ | **`open_salon_browser`** | *"Show me the entire gallery collection on the salon wall"* | Opens architectural full-screen salon gallery collection |
 
 ---
 
