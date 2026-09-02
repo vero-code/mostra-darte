@@ -8,6 +8,8 @@ interface MasterpieceModalProps {
   onClose: () => void;
   currentArtworkId: string;
   onSelectArtwork: (artwork: Artwork) => void;
+  initialSearch?: string;
+  initialPeriod?: string;
 }
 
 export const MasterpieceModal: React.FC<MasterpieceModalProps> = ({
@@ -15,9 +17,18 @@ export const MasterpieceModal: React.FC<MasterpieceModalProps> = ({
   onClose,
   currentArtworkId,
   onSelectArtwork,
+  initialSearch,
+  initialPeriod,
 }) => {
-  const [searchTerm, setSearchTerm] = useState('');
-  const [selectedPeriod, setSelectedPeriod] = useState<string>('all');
+  const [searchTerm, setSearchTerm] = useState(initialSearch || '');
+  const [selectedPeriod, setSelectedPeriod] = useState<string>(initialPeriod || 'all');
+
+  React.useEffect(() => {
+    if (typeof initialSearch === 'string') setSearchTerm(initialSearch);
+  }, [initialSearch]);
+  React.useEffect(() => {
+    if (typeof initialPeriod === 'string') setSelectedPeriod(initialPeriod);
+  }, [initialPeriod]);
 
   if (!isOpen) return null;
 

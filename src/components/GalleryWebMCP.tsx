@@ -14,7 +14,7 @@ interface GalleryWebMCPProps {
   onToggleDossier?: (open: boolean, tab?: 'overview' | 'focal' | 'palette' | 'tours') => void;
   onToggleAmbient?: (forceActive?: boolean) => void;
   onReservePass?: (pass: BookingPass) => void;
-  onToggleSalon?: (open: boolean) => void;
+  onToggleSalon?: (open: boolean, period?: string, search?: string) => void;
 }
 
 export const GalleryWebMCP: React.FC<GalleryWebMCPProps> = ({
@@ -527,28 +527,47 @@ export const GalleryWebMCP: React.FC<GalleryWebMCPProps> = ({
         {
           name: "open_salon_browser",
           title: "Browse Masterpiece Salon Wall",
-          description: "Opens or closes the full-screen Salon Gallery Wall browser displaying all canonical masterpieces in architectural gilded frames.",
+          description: "Opens the full-screen Salon Wall exhibition browser. IMPORTANT: Whenever the user asks for, mentions, or filters by a specific art period or artist, you MUST specify the 'period' (e.g., 'Dutch Golden Age', 'High Renaissance') or 'search' parameter to automatically filter the paintings shown on screen.",
           inputSchema: {
             type: "object",
             properties: {
               open: {
                 type: "boolean",
                 description: "True to open the Salon Wall modal, false to close it."
+              },
+              period: {
+                type: "string",
+                description: "Art historical period to filter by. Always specify this when the user asks about a period or movement: 'Dutch Golden Age', 'Post-Impressionism', 'High Renaissance', 'Early Renaissance', 'Vienna Secession / Art Nouveau', or 'all'.",
+                enum: [
+                  "all",
+                  "Post-Impressionism",
+                  "High Renaissance",
+                  "Dutch Golden Age",
+                  "Early Renaissance",
+                  "Vienna Secession / Art Nouveau"
+                ]
+              },
+              search: {
+                type: "string",
+                description: "Search keyword to filter by artist name or painting title (e.g. 'Vermeer', 'Mona Lisa')."
               }
             },
             required: ["open"]
           },
           execute: async (
-            { open }: any,
+            { open, period, search }: any,
             { signal }: { signal?: AbortSignal } = {}
           ) => {
             if (signal?.aborted) return "Salon toggle cancelled.";
 
             if (onToggleSalonRef.current) {
-              onToggleSalonRef.current(Boolean(open));
-              return open
-                ? "Masterpiece Salon Wall gallery opened on screen."
-                : "Masterpiece Salon Wall gallery closed.";
+              onToggleSalonRef.current(Boolean(open), period, search);
+              if (!open) return "Masterpiece Salon Wall gallery closed.";
+              const filterDetails = [
+                period && period !== 'all' ? `period: "${period}"` : null,
+                search ? `query: "${search}"` : null
+              ].filter(Boolean).join(', ');
+              return `Masterpiece Salon Wall opened${filterDetails ? ` (filtered by ${filterDetails})` : ''}.`;
             }
             return "Salon controller unavailable.";
           },

@@ -36,7 +36,11 @@ function App() {
 
   const [isInfoOpen, setIsInfoOpen] = useState(false);
   const [infoTab, setInfoTab] = useState<'overview' | 'focal' | 'palette' | 'tours'>('overview');
+
   const [isSalonModalOpen, setIsSalonModalOpen] = useState(false);
+  const [salonSearch, setSalonSearch] = useState('');
+  const [salonPeriod, setSalonPeriod] = useState('all');
+
   const [activeTour, setActiveTour] = useState<GuidedTour | null>(null);
   const [tourStopIndex, setTourStopIndex] = useState(0);
 
@@ -274,8 +278,10 @@ function App() {
   }, []);
 
   // Toggle Salon Wall Modal
-  const handleToggleSalon = useCallback((open: boolean) => {
+  const handleToggleSalon = useCallback((open: boolean, period?: string, search?: string) => {
     setIsSalonModalOpen(open);
+    if (period) setSalonPeriod(period);
+    if (search !== undefined) setSalonSearch(search);
   }, []);
 
   // Handle Exhibition Booking
@@ -392,6 +398,8 @@ function App() {
         onClose={() => setIsSalonModalOpen(false)}
         currentArtworkId={currentArtwork.id}
         onSelectArtwork={handleSelectArtwork}
+        initialSearch={salonSearch}
+        initialPeriod={salonPeriod}
       />
 
       {/* Exhibition VIP Booking Pass Modal */}

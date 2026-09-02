@@ -27,7 +27,7 @@ interface GalleryHeaderProps {
   onViewportChange: (newVp: Partial<ViewportState>) => void;
   onToggleDossier?: (open: boolean, tab?: 'overview' | 'focal' | 'palette' | 'tours') => void;
   onReservePass?: (pass: BookingPass) => void;
-  onToggleSalon?: (open: boolean) => void;
+  onToggleSalon?: (open: boolean, period?: string, search?: string) => void;
 }
 
 export const GalleryHeader: React.FC<GalleryHeaderProps> = ({
