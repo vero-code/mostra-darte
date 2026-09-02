@@ -139,6 +139,7 @@ export const GalleryHeader: React.FC<GalleryHeaderProps> = ({
           onViewportChange={onViewportChange}
           onSelectArtwork={onSelectArtwork}
           onToggleDossier={onToggleDossier}
+          onToggleAmbient={onToggleAmbient}
         />
 
         {/* Salon Wall Browser */}

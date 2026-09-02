@@ -5,9 +5,10 @@ import { MASTERPIECES } from '../data/artworks';
 interface GalleryWebMCPProps {
   currentArtwork?: Artwork;
   onStartTour?: () => void;
-  onToggleDossier?: (open: boolean, tab?: 'overview' | 'focal' | 'palette' | 'tours') => void;
   onViewportChange: (newVp: Partial<ViewportState>) => void;
   onSelectArtwork: (artwork: Artwork) => void;
+  onToggleDossier?: (open: boolean, tab?: 'overview' | 'focal' | 'palette' | 'tours') => void;
+  onToggleAmbient?: (forceActive?: boolean) => void;
 }
 
 export const GalleryWebMCP: React.FC<GalleryWebMCPProps> = ({
@@ -15,7 +16,8 @@ export const GalleryWebMCP: React.FC<GalleryWebMCPProps> = ({
   onStartTour,
   onViewportChange,
   onSelectArtwork,
-  onToggleDossier
+  onToggleDossier,
+  onToggleAmbient,
 }) => {
   const [isSupported, setIsSupported] = useState(false);
   const [isRegistered, setIsRegistered] = useState(false);
@@ -29,6 +31,9 @@ export const GalleryWebMCP: React.FC<GalleryWebMCPProps> = ({
 
   const onToggleDossierRef = useRef(onToggleDossier);
   onToggleDossierRef.current = onToggleDossier;
+
+  const onToggleAmbientRef = useRef(onToggleAmbient);
+  onToggleAmbientRef.current = onToggleAmbient;
 
   useEffect(() => {
     if (typeof document === 'undefined' || !document.modelContext) {
@@ -359,6 +364,45 @@ export const GalleryWebMCP: React.FC<GalleryWebMCPProps> = ({
                 : "Curatorial dossier closed.";
             }
             return "Dossier controller unavailable.";
+          },
+          annotations: {
+            readOnlyHint: true,
+          }
+        },
+        { signal: controller.signal }
+      )?.catch?.((err: any) => {
+        if (err?.name !== 'AbortError') console.error(err);
+      });
+
+      // Tool 8: Toggle Ambient Acoustics
+      document.modelContext.registerTool(
+        {
+          name: "toggle_ambient_acoustics",
+          title: "Toggle Gallery Ambient Acoustics",
+          description: "Activates or deactivates the synthetic contemplative museum hall reverberation chord synthesized via the Web Audio API.",
+          inputSchema: {
+            type: "object",
+            properties: {
+              active: {
+                type: "boolean",
+                description: "True to start atmospheric museum background audio, false to mute it."
+              }
+            },
+            required: ["active"]
+          },
+          execute: async (
+            { active }: any,
+            { signal }: { signal?: AbortSignal } = {}
+          ) => {
+            if (signal?.aborted) return "Acoustics toggle cancelled.";
+
+            if (onToggleAmbientRef.current) {
+              onToggleAmbientRef.current(Boolean(active));
+              return active
+                ? "Gallery ambient acoustics activated."
+                : "Gallery ambient acoustics muted.";
+            }
+            return "Audio controller unavailable.";
           },
           annotations: {
             readOnlyHint: true,

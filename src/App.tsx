@@ -270,10 +270,22 @@ function App() {
   }, []);
 
   // Ambient sound toggle
-  const handleToggleAmbient = () => {
-    const isNowPlaying = ambientAudio.toggle();
-    setAmbientPlaying(isNowPlaying);
-  };
+  const handleToggleAmbient = useCallback((forceActive?: boolean) => {
+    let nextPlaying: boolean;
+    if (typeof forceActive === 'boolean') {
+      if (forceActive) {
+        ambientAudio.start();
+        nextPlaying = true;
+      } else {
+        ambientAudio.stop();
+        nextPlaying = false;
+      }
+    } else {
+      nextPlaying = ambientAudio.toggle();
+    }
+    setAmbientPlaying(nextPlaying);
+    return nextPlaying;
+  }, []);
 
   // Voice toggle
   const handleToggleVoice = () => {
