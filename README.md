@@ -86,6 +86,9 @@ Mostra d'Arte strictly adheres to the **[W3C Web Machine Learning Working Draft]
 5. **Cooperative Cancellation (`AbortSignal`) (§ 3.1):**  
    All tool execution callbacks honor `{ signal: AbortSignal }`, immediately aborting active camera springs or network requests if the user changes commands.
 
+6. **Graceful Error Recovery & Natural Language Variance Tolerance:**  
+   Adhering to Google Chrome's WebMCP architectural guidelines (*"Fail gracefully and enable recovery"*), tools never terminate in raw protocol crashes (`throw Error`). Instead, they return actionable context-aware guidance (e.g., suggesting all canonical masterpiece IDs if an unrecognized painting is queried). Furthermore, tools absorb conversational variance through tab synonym mapping (`"colors"` / `"pigments"` ➔ `"palette"`), fuzzy movement matching (`"Dutch"` ➔ `"Dutch Golden Age"`), and defensive mathematical sanitization guarding against `NaN` coordinates.
+
 ---
 
 ## 🧪 Testing with WebMCP (Judge Guide)
