@@ -128,6 +128,7 @@ export const GalleryHeader: React.FC<GalleryHeaderProps> = ({
         {/* WebMCP indicator */}
         <GalleryWebMCP
           currentArtwork={currentArtwork}
+          onStartTour={onStartTour}
           onViewportChange={onViewportChange}
           onSelectArtwork={onSelectArtwork}
         />

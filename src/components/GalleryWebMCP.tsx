@@ -4,12 +4,14 @@ import { MASTERPIECES } from '../data/artworks';
 
 interface GalleryWebMCPProps {
   currentArtwork?: Artwork;
+  onStartTour?: () => void;
   onViewportChange: (newVp: Partial<ViewportState>) => void;
   onSelectArtwork: (artwork: Artwork) => void;
 }
 
 export const GalleryWebMCP: React.FC<GalleryWebMCPProps> = ({
   currentArtwork,
+  onStartTour,
   onViewportChange,
   onSelectArtwork,
 }) => {
@@ -19,6 +21,9 @@ export const GalleryWebMCP: React.FC<GalleryWebMCPProps> = ({
 
   const currentArtworkRef = useRef(currentArtwork);
   currentArtworkRef.current = currentArtwork;
+
+  const onStartTourRef = useRef(onStartTour);
+  onStartTourRef.current = onStartTour;
 
   useEffect(() => {
     if (typeof document === 'undefined' || !document.modelContext) {
@@ -267,6 +272,46 @@ export const GalleryWebMCP: React.FC<GalleryWebMCPProps> = ({
           annotations: {
             readOnlyHint: true,
           }
+        },
+        { signal: controller.signal }
+      )?.catch?.((err: any) => {
+        if (err?.name !== 'AbortError') console.error(err);
+      });
+
+      // Tool 6: Start Guided Tour
+      document.modelContext.registerTool(
+        {
+          name: "start_guided_tour",
+          title: "Start Guided Tour",
+          description: "Launches an automated curatorial tour on the currently exhibited masterpiece, navigating through key historical focal points with pacing and voice narration.",
+          inputSchema: {
+            type: "object",
+            properties: {
+              note: {
+                type: "string",
+                description: "Optional reason or focus for starting the tour.",
+              },
+            },
+          },
+          execute: async (
+            _params: any,
+            { signal }: { signal?: AbortSignal } = {}
+          ) => {
+            if (signal?.aborted) return "Tour launch cancelled.";
+
+            const active = currentArtworkRef.current || MASTERPIECES[0];
+            const tour = active.tours?.[0];
+            if (!tour) return "No guided tour available for this artwork.";
+
+            if (onStartTourRef.current) {
+              onStartTourRef.current();
+              return `Guided tour "${tour.title}" launched (${tour.stops.length} stops).`;
+            }
+            return "Tour controller unavailable.";
+          },
+          annotations: {
+            readOnlyHint: true,
+          },
         },
         { signal: controller.signal }
       )?.catch?.((err: any) => {
