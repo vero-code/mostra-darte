@@ -37,9 +37,11 @@ export const GalleryWebMCP: React.FC<GalleryWebMCPProps> = ({
     // WebMCP tool change listener
     const handleToolChange = async () => {
       try {
-        const tools = await document.modelContext.getTools();
-        setToolCount(tools.length);
-        if (tools.length > 0) setIsRegistered(true);
+        const tools = await document.modelContext?.getTools();
+        if (tools) {
+          setToolCount(tools.length);
+          if (tools.length > 0) setIsRegistered(true);
+        }
       } catch (err) {
         console.error("Error reading tools:", err);
       }
@@ -324,7 +326,7 @@ export const GalleryWebMCP: React.FC<GalleryWebMCPProps> = ({
     }
 
     return () => {
-      document.modelContext.removeEventListener("toolchange", handleToolChange);
+      document.modelContext?.removeEventListener("toolchange", handleToolChange);
       controller.abort();
       setIsRegistered(false);
       setToolCount(0);
