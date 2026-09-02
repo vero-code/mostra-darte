@@ -15,17 +15,18 @@ export const GalleryWebMCP: React.FC<GalleryWebMCPProps> = ({
   const [isRegistered, setIsRegistered] = useState(false);
 
   useEffect(() => {
-    const supported = typeof document !== 'undefined' && Boolean((document as any).modelContext?.registerTool);
-    setIsSupported(supported);
+    if (typeof document === 'undefined' || !document.modelContext) {
+      setIsSupported(false);
+      return;
+    }
 
-    if (!supported) return;
-
+    setIsSupported(true);
     const controller = new AbortController();
 
     // WebMCP tool registration
     try {
       // Tool 1: zoom_painting
-      (document as any).modelContext.registerTool(
+      document.modelContext.registerTool(
         {
           name: "zoom_painting",
           description: "Directs the gallery visitor's viewport and camera zoom to focus on a specific coordinate on the canvas.",
@@ -64,7 +65,7 @@ export const GalleryWebMCP: React.FC<GalleryWebMCPProps> = ({
       });
 
       // Tool 2: Switching the painting in the gallery
-      (document as any).modelContext.registerTool(
+      document.modelContext.registerTool(
         {
           name: "switch_masterpiece",
           description: "Exhibits a different masterpiece in the gallery room. Available IDs: 'starry-night', 'mona-lisa', 'girl-pearl-earring', 'the-kiss', 'birth-of-venus', 'great-wave', 'creation-of-adam'.",
@@ -118,7 +119,7 @@ export const GalleryWebMCP: React.FC<GalleryWebMCPProps> = ({
       });
 
       // Tool 3: Reset view to full canvas
-      (document as any).modelContext.registerTool(
+      document.modelContext.registerTool(
         {
           name: "reset_view",
           description: "Resets the canvas camera zoom back to 1.0x to view the entire framed painting composition as a whole.",
@@ -156,7 +157,7 @@ export const GalleryWebMCP: React.FC<GalleryWebMCPProps> = ({
       });
 
       // Tool 4: Toggle gallery vignette spotlight
-      (document as any).modelContext.registerTool(
+      document.modelContext.registerTool(
         {
           name: "toggle_spotlight",
           description: "Activates or deactivates a focused museum vignette spotlight on the painting, darkening ambient background surroundings for dramatic focus.",
