@@ -49,6 +49,9 @@ export const GalleryWebMCP: React.FC<GalleryWebMCPProps> = ({
             });
             return `Camera focused on "${detail_name || 'detail'}" at {x: ${x}%, y: ${y}%} at ${zoom}x zoom.`;
           },
+          annotations: {
+            readOnlyHint: true,
+          },
         },
         { signal: controller.signal }
       )?.catch?.((err: any) => {
@@ -95,6 +98,9 @@ export const GalleryWebMCP: React.FC<GalleryWebMCPProps> = ({
             onViewportChange({ zoom: 1, x: 50, y: 50, activeLabel: undefined, isAutoAnimating: true });
             return `Gallery exhibition successfully switched to "${target.title}" by ${target.artist}.`;
           },
+          annotations: {
+            readOnlyHint: true,
+          },
         },
         { signal: controller.signal }
       )?.catch?.((err: any) => {
@@ -125,6 +131,9 @@ export const GalleryWebMCP: React.FC<GalleryWebMCPProps> = ({
             });
             return "Camera zoom successfully reset to 1.0x viewing the complete painting.";
           },
+          annotations: {
+            readOnlyHint: true,
+          },
         },
         { signal: controller.signal }
       )?.catch?.((err: any) => {
@@ -150,6 +159,9 @@ export const GalleryWebMCP: React.FC<GalleryWebMCPProps> = ({
             const isEnabled = Boolean(active);
             onViewportChange({ spotlightActive: isEnabled });
             return `Gallery spotlight dramatically ${isEnabled ? 'activated' : 'deactivated'}.`;
+          },
+          annotations: {
+            readOnlyHint: true,
           },
         },
         { signal: controller.signal }
