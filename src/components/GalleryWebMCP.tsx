@@ -29,6 +29,7 @@ export const GalleryWebMCP: React.FC<GalleryWebMCPProps> = ({
       document.modelContext.registerTool(
         {
           name: "zoom_painting",
+          title: "Zoom Canvas on Detail",
           description: "Directs the gallery visitor's viewport and camera zoom to focus on a specific coordinate on the canvas.",
           inputSchema: {
             type: "object",
@@ -68,6 +69,7 @@ export const GalleryWebMCP: React.FC<GalleryWebMCPProps> = ({
       document.modelContext.registerTool(
         {
           name: "switch_masterpiece",
+          title: "Switch Masterpiece Exhibition",
           description: "Exhibits a different masterpiece in the gallery room. Available IDs: 'starry-night', 'mona-lisa', 'girl-pearl-earring', 'the-kiss', 'birth-of-venus', 'great-wave', 'creation-of-adam'.",
           inputSchema: {
             type: "object",
@@ -122,6 +124,7 @@ export const GalleryWebMCP: React.FC<GalleryWebMCPProps> = ({
       document.modelContext.registerTool(
         {
           name: "reset_view",
+          title: "Reset Canvas View",
           description: "Resets the canvas camera zoom back to 1.0x to view the entire framed painting composition as a whole.",
           inputSchema: {
             type: "object",
@@ -160,6 +163,7 @@ export const GalleryWebMCP: React.FC<GalleryWebMCPProps> = ({
       document.modelContext.registerTool(
         {
           name: "toggle_spotlight",
+          title: "Toggle Gallery Spotlight",
           description: "Activates or deactivates a focused museum vignette spotlight on the painting, darkening ambient background surroundings for dramatic focus.",
           inputSchema: {
             type: "object",
