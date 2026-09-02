@@ -46,6 +46,13 @@ export const ArtworkCanvas: React.FC<ArtworkCanvasProps> = ({
     }
   }, [artwork.id, artwork.imageUrl]);
 
+  // Automatically clear click ripple on Reset View (zoom === 1)
+  useEffect(() => {
+    if (viewport.zoom === 1) {
+      setClickRipple(null);
+    }
+  }, [viewport.zoom]);
+
   // Handle Fullscreen
   const toggleFullscreen = () => {
     if (!containerRef.current) return;
@@ -156,7 +163,11 @@ export const ArtworkCanvas: React.FC<ArtworkCanvasProps> = ({
     const clampedX = Math.min(Math.max(0, parseFloat(artX.toFixed(1))), 100);
     const clampedY = Math.min(Math.max(0, parseFloat(artY.toFixed(1))), 100);
 
-    setClickRipple({ x: clampedX, y: clampedY, id: Date.now() });
+    const clickId = Date.now();
+    setClickRipple({ x: clampedX, y: clampedY, id: clickId });
+    setTimeout(() => {
+      setClickRipple((prev) => (prev?.id === clickId ? null : prev));
+    }, 2500);
     onCanvasClickCoordinate({ x: clampedX, y: clampedY });
   };
 
@@ -171,6 +182,7 @@ export const ArtworkCanvas: React.FC<ArtworkCanvasProps> = ({
       } else if (e.key === '-' || e.key === '_') {
         onViewportChange({ zoom: Math.max(1, viewport.zoom * 0.8), isAutoAnimating: false });
       } else if (e.key === '0') {
+        setClickRipple(null);
         onViewportChange({ zoom: 1, x: 50, y: 50, activeLabel: undefined, isAutoAnimating: true });
       } else if (e.key === 's' || e.key === 'S') {
         onViewportChange({ spotlightActive: !viewport.spotlightActive });
@@ -419,6 +431,7 @@ export const ArtworkCanvas: React.FC<ArtworkCanvasProps> = ({
             title="Reset View to 1.0x (0)"
             onClick={(e) => {
               e.stopPropagation();
+              setClickRipple(null);
               onViewportChange({
                 zoom: 1,
                 x: 50,
