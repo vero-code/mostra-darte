@@ -102,14 +102,21 @@ export const GalleryWebMCP: React.FC<GalleryWebMCPProps> = ({
           ) => {
             if (signal?.aborted) return "Zoom operation cancelled.";
 
+            const numX = Number(x);
+            const numY = Number(y);
+            const numZoom = Number(zoom);
+            const clampedX = Number.isFinite(numX) ? Math.max(0, Math.min(100, numX)) : 50;
+            const clampedY = Number.isFinite(numY) ? Math.max(0, Math.min(100, numY)) : 50;
+            const clampedZoom = Number.isFinite(numZoom) ? Math.max(1, Math.min(8, numZoom)) : 2.5;
+
             onViewportChange({
-              x: Math.max(0, Math.min(100, Number(x))),
-              y: Math.max(0, Math.min(100, Number(y))),
-              zoom: Math.max(1, Math.min(8, Number(zoom))),
+              x: clampedX,
+              y: clampedY,
+              zoom: clampedZoom,
               activeLabel: detail_name || "Detail Inspection",
               isAutoAnimating: true,
             });
-            return `Camera focused on "${detail_name || 'detail'}" at {x: ${x}%, y: ${y}%} at ${zoom}x zoom.`;
+            return `Camera focused on "${detail_name || 'canvas detail'}" at {x: ${clampedX}%, y: ${clampedY}%} at ${clampedZoom}x zoom.`;
           },
           annotations: {
             readOnlyHint: true,
@@ -160,7 +167,8 @@ export const GalleryWebMCP: React.FC<GalleryWebMCPProps> = ({
               (m) => m.id.toLowerCase() === cleanId || m.title.toLowerCase().includes(cleanId)
             );
             if (!target) {
-              throw new Error(`Masterpiece "${artwork_id}" not found in gallery collection.`);
+              const availableIds = MASTERPIECES.map(m => `"${m.id}" (${m.title})`).join(', ');
+              return `Masterpiece "${artwork_id}" was not found in gallery collection. Available canonical masterpieces: ${availableIds}. Please retry with one of these valid IDs.`;
             }
             onSelectArtwork(target);
             onViewportChange({ zoom: 1, x: 50, y: 50, activeLabel: undefined, isAutoAnimating: true });
@@ -236,7 +244,7 @@ export const GalleryWebMCP: React.FC<GalleryWebMCPProps> = ({
           ) => {
             if (signal?.aborted) return "Spotlight toggle cancelled.";
 
-            const isEnabled = Boolean(active);
+            const isEnabled = typeof active === 'boolean' ? active : true;
             onViewportChange({ spotlightActive: isEnabled });
             return `Gallery spotlight dramatically ${isEnabled ? 'activated' : 'deactivated'}.`;
           },
@@ -280,20 +288,27 @@ export const GalleryWebMCP: React.FC<GalleryWebMCPProps> = ({
             if (signal?.aborted) return "Query cancelled.";
 
             const active = currentArtworkRef.current || MASTERPIECES[0];
-            const target = artwork_id
-              ? MASTERPIECES.find(m => m.id === artwork_id) || active
+            const cleanId = artwork_id ? String(artwork_id).toLowerCase().trim() : '';
+            const target = cleanId
+              ? MASTERPIECES.find(m => m.id.toLowerCase() === cleanId || m.title.toLowerCase().includes(cleanId))
               : active;
 
+            if (artwork_id && !target) {
+              const availableIds = MASTERPIECES.map(m => `"${m.id}" (${m.title})`).join(', ');
+              return `Artwork "${artwork_id}" is not in the gallery archives. Available masterpieces: ${availableIds}.`;
+            }
+            const painting = target || active;
+
             return {
-              id: target.id,
-              title: target.title,
-              artist: target.artist,
-              year: target.year,
-              period: target.period,
-              location: target.location,
-              curatorOverview: target.curatorOverview,
-              palette: target.colorPalette.map(p => `${p.name} (${p.role})`),
-              keyDetails: target.focalPoints.map(fp => ({
+              id: painting.id,
+              title: painting.title,
+              artist: painting.artist,
+              year: painting.year,
+              period: painting.period,
+              location: painting.location,
+              curatorOverview: painting.curatorOverview,
+              palette: painting.colorPalette.map(p => `${p.name} (${p.role})`),
+              keyDetails: painting.focalPoints.map(fp => ({
                 name: fp.name,
                 coordinates: { x: fp.x, y: fp.y, zoom: fp.zoom },
                 curatorInsight: fp.curatorInsight
@@ -376,10 +391,20 @@ export const GalleryWebMCP: React.FC<GalleryWebMCPProps> = ({
           ) => {
             if (signal?.aborted) return "Dossier toggle cancelled.";
 
+            const isOpen = typeof open === 'boolean' ? open : true;
+            let normalizedTab: any = tab;
+            if (typeof tab === 'string') {
+              const lt = tab.toLowerCase();
+              if (lt.includes('color') || lt.includes('pigment') || lt.includes('palette')) normalizedTab = 'palette';
+              else if (lt.includes('focal') || lt.includes('point') || lt.includes('detail') || lt.includes('hotspot')) normalizedTab = 'focal';
+              else if (lt.includes('tour')) normalizedTab = 'tours';
+              else if (lt.includes('overview') || lt.includes('about') || lt.includes('info')) normalizedTab = 'overview';
+            }
+
             if (onToggleDossierRef.current) {
-              onToggleDossierRef.current(Boolean(open), tab);
-              return open
-                ? `Curatorial dossier opened${tab ? ` on the "${tab}" tab` : ''}.`
+              onToggleDossierRef.current(isOpen, normalizedTab);
+              return isOpen
+                ? `Curatorial dossier opened${normalizedTab ? ` on the "${normalizedTab}" tab` : ''}.`
                 : "Curatorial dossier closed.";
             }
             return "Dossier controller unavailable.";
@@ -415,9 +440,10 @@ export const GalleryWebMCP: React.FC<GalleryWebMCPProps> = ({
           ) => {
             if (signal?.aborted) return "Acoustics toggle cancelled.";
 
+            const isEnabled = typeof active === 'boolean' ? active : true;
             if (onToggleAmbientRef.current) {
-              onToggleAmbientRef.current(Boolean(active));
-              return active
+              onToggleAmbientRef.current(isEnabled);
+              return isEnabled
                 ? "Gallery ambient acoustics activated."
                 : "Gallery ambient acoustics muted.";
             }
@@ -469,13 +495,23 @@ export const GalleryWebMCP: React.FC<GalleryWebMCPProps> = ({
 
             const active = currentArtworkRef.current || MASTERPIECES[0];
             const passId = `MDA-2026-${Math.floor(1000 + Math.random() * 9000)}`;
+            const cleanName = String(visitor_name || '').trim() || 'Exhibition Guest';
+            const cleanDate = String(date || '').trim() || 'Tomorrow';
+            let normalizedSession = 'Evening VIP & Nocturne';
+            if (typeof session === 'string') {
+              const ls = session.toLowerCase();
+              if (ls.includes('morning')) normalizedSession = 'Morning Curatorial Walk';
+              else if (ls.includes('afternoon')) normalizedSession = 'Afternoon Salon';
+              else if (ls.includes('evening') || ls.includes('night') || ls.includes('nocturne')) normalizedSession = 'Evening VIP & Nocturne';
+            }
+            const count = Math.max(1, Math.min(10, Number(tickets_count) || 1));
 
             const pass: BookingPass = {
               passId,
-              visitorName: visitor_name,
-              date,
-              session,
-              ticketsCount: Number(tickets_count) || 1,
+              visitorName: cleanName,
+              date: cleanDate,
+              session: normalizedSession,
+              ticketsCount: count,
               artworkTitle: `${active.title} — ${active.artist}`,
               confirmedAt: Date.now(),
             };
@@ -484,7 +520,7 @@ export const GalleryWebMCP: React.FC<GalleryWebMCPProps> = ({
               onReservePassRef.current(pass);
             }
 
-            return `Exhibition VIP Pass confirmed! Pass ID: ${passId}. Visitor: ${visitor_name}. Passes: ${tickets_count}. Date: ${date} (${session}). Digital admission ticket displayed on screen.`;
+            return `Exhibition VIP Pass confirmed! Pass ID: ${passId}. Visitor: ${cleanName}. Passes: ${count}. Date: ${cleanDate} (${normalizedSession}). Digital admission ticket displayed on screen.`;
           },
         },
         { signal: controller.signal }
@@ -514,7 +550,7 @@ export const GalleryWebMCP: React.FC<GalleryWebMCPProps> = ({
           ) => {
             if (signal?.aborted) return "Grid toggle cancelled.";
 
-            const isEnabled = Boolean(active);
+            const isEnabled = typeof active === 'boolean' ? active : true;
             onViewportChange({ gridActive: isEnabled });
             return `Golden ratio composition grid ${isEnabled ? 'activated' : 'deactivated'} on canvas.`;
           },
@@ -565,11 +601,21 @@ export const GalleryWebMCP: React.FC<GalleryWebMCPProps> = ({
           ) => {
             if (signal?.aborted) return "Salon toggle cancelled.";
 
+            const isOpen = typeof open === 'boolean' ? open : true;
+            let normalizedPeriod = period;
+            if (typeof period === 'string' && period !== 'all') {
+              const lp = period.toLowerCase();
+              const matched = MASTERPIECES.map(m => m.period).find(p =>
+                p.toLowerCase().includes(lp) || lp.includes(p.toLowerCase())
+              );
+              if (matched) normalizedPeriod = matched;
+            }
+
             if (onToggleSalonRef.current) {
-              onToggleSalonRef.current(Boolean(open), period, search);
-              if (!open) return "Masterpiece Salon Wall gallery closed.";
+              onToggleSalonRef.current(isOpen, normalizedPeriod, search);
+              if (!isOpen) return "Masterpiece Salon Wall gallery closed.";
               const filterDetails = [
-                period && period !== 'all' ? `period: "${period}"` : null,
+                normalizedPeriod && normalizedPeriod !== 'all' ? `period: "${normalizedPeriod}"` : null,
                 search ? `query: "${search}"` : null
               ].filter(Boolean).join(', ');
               return `Masterpiece Salon Wall opened${filterDetails ? ` (filtered by ${filterDetails})` : ''}.`;
