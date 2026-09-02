@@ -48,14 +48,33 @@ document.modelContext.registerTool({
 }, { signal: abortController.signal });
 ```
 
-### 🛠️ Registered WebMCP Tools
+### 🛠️ Registered WebMCP Tools (W3C August 2026 Standard)
 
-| Tool Name | Description | Parameters |
-| :--- | :--- | :--- |
-| **`zoom_painting`** | Physically steers the canvas viewport camera to focus on microscopic details, brushstrokes, and hidden symbols. | `x` (0-100), `y` (0-100), `zoom` (1.5-8.0), `detail_name` (string) |
-| **`switch_masterpiece`** | Dynamically changes the active painting on the gallery wall across the collection. | `artwork_id` (`starry-night`, `mona-lisa`, `girl-pearl-earring`, `the-kiss`, etc.), `reason` (string) |
-| **`reset_view`** | Restores the viewport zoom back to 1.0x to contemplate the complete framed artwork as a cohesive whole. | `note` (optional string) |
-| **`toggle_spotlight`** | Actuates a dramatic museum vignette spotlight, darkening ambient surroundings for heightened visual focus. | `active` (boolean) |
+| Tool Name | Title | Description | Annotations | Parameters |
+| :--- | :--- | :--- | :--- | :--- |
+| **`get_artwork_details`** | *Get Curatorial Artwork Insights* | Retrieves deep historical provenance, palette symbolism, and notable coordinates from the gallery archives. | `readOnlyHint: true` | `artwork_id` (optional string) |
+| **`zoom_painting`** | *Zoom Canvas on Detail* | Physically steers the canvas viewport camera to focus on microscopic details, brushstrokes, and hidden symbols. | `readOnlyHint: true` | `x` (0-100), `y` (0-100), `zoom` (1.5-8.0), `detail_name` (string) |
+| **`switch_masterpiece`** | *Switch Masterpiece Exhibition* | Dynamically changes the active painting on the gallery wall across the canonical collection. | `readOnlyHint: true` | `artwork_id` (`starry-night`, `mona-lisa`, etc.), `reason` (string) |
+| **`reset_view`** | *Reset Canvas View* | Restores viewport camera zoom back to 1.0x to contemplate the complete framed composition. | `readOnlyHint: true` | `note` (optional string) |
+| **`toggle_spotlight`** | *Toggle Gallery Spotlight* | Actuates dramatic museum vignette lighting, darkening surroundings for heightened focus. | `readOnlyHint: true` | `active` (boolean) |
+
+---
+
+## 🏛️ Architectural Alignment with W3C WebMCP (August 2026 Draft)
+
+Mostra d'Arte was developed adhering strictly to the **[W3C WebML Working Draft (26 August 2026)](https://webmachinelearning.github.io/webmcp)**:
+
+1. **Multimodal Vision via Annotated Page Content (APC) (§ 5.2):**  
+   Modern Chromium agents do not just inspect the DOM; they take real-time visual *observations* (APC snapshots) of the canvas. Mostra d'Arte bridges this visual cortex with physical tool execution — the agent *visually identifies* features on canvas (like Van Gogh's cypress or Mona Lisa's smile) and translates them into precise viewport coordinates via `zoom_painting`.
+   
+2. **Security & Intent Declarations (§ 4.2.1 & § 6.4.3):**  
+   All 5 tools declare `annotations: { readOnlyHint: true }`. This signals to the browser agent that executions are non-destructive explorations, eliminating intrusive permission prompts and allowing silky-smooth chained interactions.
+
+3. **Lifecycle Events & Dynamic Tooling (§ 4.4):**  
+   The UI listens to the native `document.modelContext.addEventListener("toolchange", ...)` event, automatically reflecting live tool registration state and telemetry in the gallery header badge.
+
+4. **Cooperative Cancellation (§ 3.1 & § 4.2.2):**  
+   Every tool callback receives `{ signal }` (`AbortSignal`). If the user interrupts an ongoing camera zoom or query, execution halts gracefully without memory leaks.
 
 ---
 
@@ -111,7 +130,8 @@ You can test the agent tools in two simple ways:
 3. Open the extension side panel. You will see all **4 WebMCP tools** detected automatically.
 4. Try this multi-step agentic prompt in the extension chat:
    > *"Exhibit the Mona Lisa, turn on the focused spotlight for dramatic atmosphere, and zoom in on her elusive smile."*
-5. Watch the browser autonomously execute the 3-tool chain in real time!
+   > *"Tell me the historical background and key focal points of this painting, then zoom in on the most symbolic detail."*
+5. Watch the browser autonomously execute the tools chain in real time!
 
 ### Option B: Native Chrome WebMCP Flag
 1. In Google Chrome, navigate to `chrome://flags/#enable-webmcp-testing`.
