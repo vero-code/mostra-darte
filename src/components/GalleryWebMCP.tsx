@@ -482,6 +482,41 @@ export const GalleryWebMCP: React.FC<GalleryWebMCPProps> = ({
         if (err?.name !== 'AbortError') console.error(err);
       });
 
+      // Tool 10: Toggle Composition Grid
+      document.modelContext.registerTool(
+        {
+          name: "toggle_composition_grid",
+          title: "Toggle Composition Grid",
+          description: "Overlays or hides the Golden Ratio dynamic composition grid on the canvas to analyze geometric balance, spiral ratios, and focal alignment.",
+          inputSchema: {
+            type: "object",
+            properties: {
+              active: {
+                type: "boolean",
+                description: "True to display the golden ratio and rule-of-thirds composition grid, false to hide it."
+              }
+            },
+            required: ["active"]
+          },
+          execute: async (
+            { active }: any,
+            { signal }: { signal?: AbortSignal } = {}
+          ) => {
+            if (signal?.aborted) return "Grid toggle cancelled.";
+
+            const isEnabled = Boolean(active);
+            onViewportChange({ gridActive: isEnabled });
+            return `Golden ratio composition grid ${isEnabled ? 'activated' : 'deactivated'} on canvas.`;
+          },
+          annotations: {
+            readOnlyHint: true,
+          }
+        },
+        { signal: controller.signal }
+      )?.catch?.((err: any) => {
+        if (err?.name !== 'AbortError') console.error(err);
+      });
+
       setIsRegistered(true);
     } catch (err) {
       console.error("Failed to register WebMCP tool:", err);
