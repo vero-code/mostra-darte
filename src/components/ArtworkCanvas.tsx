@@ -1,4 +1,4 @@
-import React, { useRef, useState, useEffect, useCallback } from 'react';
+import React, { useRef, useState, useEffect } from 'react';
 import {
   ZoomIn,
   ZoomOut,
@@ -33,7 +33,6 @@ export const ArtworkCanvas: React.FC<ArtworkCanvasProps> = ({
   const [dragStart, setDragStart] = useState<{ x: number; y: number }>({ x: 0, y: 0 });
   const [showHotspots, setShowHotspots] = useState(true);
   const [isFullscreen, setIsFullscreen] = useState(false);
-  // const [activeHoverHotspot, setActiveHoverHotspot] = useState<FocalPoint | null>(null);
   const [clickRipple, setClickRipple] = useState<{ x: number; y: number; id: number } | null>(null);
   const [imageLoaded, setImageLoaded] = useState(false);
   const imgRef = useRef<HTMLImageElement>(null);
@@ -67,13 +66,14 @@ export const ArtworkCanvas: React.FC<ArtworkCanvasProps> = ({
     return () => document.removeEventListener('fullscreenchange', handleFsChange);
   }, []);
 
-  // Handle Wheel Zoom
-  const handleWheel = useCallback(
-    (e: React.WheelEvent<HTMLDivElement>) => {
-      e.preventDefault();
-      if (!containerRef.current) return;
+  // Handle Wheel Zoom with non-passive listener to avoid console error
+  useEffect(() => {
+    const el = containerRef.current;
+    if (!el) return;
 
-      const rect = containerRef.current.getBoundingClientRect();
+    const onWheelNative = (e: WheelEvent) => {
+      e.preventDefault();
+      const rect = el.getBoundingClientRect();
       const cursorX = ((e.clientX - rect.left) / rect.width) * 100;
       const cursorY = ((e.clientY - rect.top) / rect.height) * 100;
 
@@ -83,7 +83,6 @@ export const ArtworkCanvas: React.FC<ArtworkCanvasProps> = ({
       if (newZoom === 1) {
         onViewportChange({ zoom: 1, x: 50, y: 50, isAutoAnimating: false });
       } else {
-        // Interpolate center toward cursor when zooming in
         const currentX = viewport.x;
         const currentY = viewport.y;
         const targetX = currentX + (cursorX - currentX) * 0.2;
@@ -96,9 +95,11 @@ export const ArtworkCanvas: React.FC<ArtworkCanvasProps> = ({
           isAutoAnimating: false,
         });
       }
-    },
-    [viewport, onViewportChange]
-  );
+    };
+
+    el.addEventListener('wheel', onWheelNative, { passive: false });
+    return () => el.removeEventListener('wheel', onWheelNative);
+  }, [viewport.zoom, viewport.x, viewport.y, onViewportChange]);
 
   // Pan Handlers
   const handleMouseDown = (e: React.MouseEvent) => {
@@ -186,7 +187,6 @@ export const ArtworkCanvas: React.FC<ArtworkCanvasProps> = ({
       className={`relative w-full h-full bg-stone-950 overflow-hidden select-none flex items-center justify-center ${
         viewport.zoom > 1 ? (isDragging ? 'cursor-grabbing' : 'cursor-grab') : 'cursor-crosshair'
       }`}
-      onWheel={handleWheel}
       onMouseDown={handleMouseDown}
       onMouseMove={handleMouseMove}
       onMouseUp={handleMouseUp}
@@ -542,7 +542,7 @@ export const ArtworkCanvas: React.FC<ArtworkCanvasProps> = ({
       <div className="absolute bottom-4 left-4 z-20 pointer-events-none opacity-80 hover:opacity-100 transition-opacity">
         <div className="bg-stone-950/80 backdrop-blur-md border border-stone-800/80 px-3 py-1.5 rounded-md flex items-center gap-2 text-xs text-stone-400">
           <Info className="w-3.5 h-3.5 text-amber-400" />
-          <span>Click any point on canvas or ask docent to zoom</span>
+          <span>Agent-actuated canvas via WebMCP</span>
         </div>
       </div>
     </div>
