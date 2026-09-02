@@ -600,25 +600,34 @@ export const GalleryWebMCP: React.FC<GalleryWebMCPProps> = ({
 
   return (
     <div className="relative group select-none">
-      {/* Badge Button */}
-      <div className="flex items-center gap-2 px-3 py-1.5 rounded-full text-xs font-mono border backdrop-blur-md transition-all duration-300 bg-stone-900/90 hover:bg-stone-850 border-stone-800 hover:border-amber-500/50 text-stone-300 shadow-md cursor-pointer">
+      {/* Button Styled in Exact Unity with Other Header Buttons */}
+      <button
+        type="button"
+        id="btn-webmcp-status"
+        className="flex items-center gap-1.5 p-2 md:px-3 md:py-1.5 rounded-lg bg-stone-900 hover:bg-stone-800 border border-stone-750 hover:border-stone-700 text-stone-300 hover:text-amber-200 text-xs font-medium transition-colors cursor-pointer"
+      >
         <span
-          className={`w-2 h-2 rounded-full ${
+          className={`w-2 h-2 rounded-full shrink-0 ${
             isSupported && isRegistered
               ? 'bg-emerald-400 animate-pulse'
               : 'bg-amber-400'
           }`}
         />
-        <span className="font-medium">
+        {/* Desktop View */}
+        <span className="hidden sm:inline font-medium">
           {isSupported && isRegistered
             ? `WebMCP: ${liveTools.length} Tools Active`
             : 'WebMCP: Offline'}
         </span>
-      </div>
+        {/* Mobile View */}
+        <span className="sm:hidden font-medium">
+          WebMCP{isSupported && isRegistered ? ` (${liveTools.length})` : ''}
+        </span>
+      </button>
 
-      {/* Tooltip on Hover */}
-      <div className="absolute right-0 sm:left-0 sm:right-auto top-full pt-1 hidden group-hover:block z-50 pointer-events-auto transition-all duration-200">
-        <div className="w-80 bg-stone-950/95 border border-amber-500/30 backdrop-blur-xl rounded-2xl p-4 shadow-[0_10px_35px_rgba(0,0,0,0.8)] text-stone-200 space-y-3 font-sans">
+      {/* Rich Tooltip on Hover / Touch */}
+      <div className="absolute right-0 top-full pt-1 hidden group-hover:block z-50 pointer-events-auto transition-all duration-200">
+        <div className="w-80 max-w-[90vw] bg-stone-950/95 border border-amber-500/30 backdrop-blur-xl rounded-2xl p-4 shadow-[0_10px_35px_rgba(0,0,0,0.8)] text-stone-200 space-y-3 font-sans">
           {/* Tooltip Header */}
           <div className="flex items-center justify-between border-b border-stone-800/80 pb-2">
             <h4 className="text-xs font-display font-bold text-amber-300 uppercase tracking-wider">
@@ -673,7 +682,7 @@ export const GalleryWebMCP: React.FC<GalleryWebMCPProps> = ({
               </div>
             </>
           ) : (
-            /* If flag is disabled — show clear instructions without any unnecessary clutter */
+            /* If flag is disabled — show clear instructions */
             <div className="space-y-2">
               <p className="text-xs text-stone-400 leading-relaxed">
                 Browser Model Context API is not enabled in this session.
