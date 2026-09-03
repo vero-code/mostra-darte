@@ -54,6 +54,8 @@ export const GalleryWebMCP: React.FC<GalleryWebMCPProps> = ({
   const onDocentSpeakRef = useRef(onDocentSpeak);
   onDocentSpeakRef.current = onDocentSpeak;
 
+  const lastZoomTimestampRef = useRef<number>(0);
+
   useEffect(() => {
     if (typeof document === 'undefined' || !document.modelContext) {
       setIsSupported(false);
@@ -85,7 +87,7 @@ export const GalleryWebMCP: React.FC<GalleryWebMCPProps> = ({
 
     // WebMCP tool registration
     try {
-      // Tool 1: zoom_painting
+      // Tool 1: Zoom painting
       document.modelContext.registerTool(
         {
           name: "zoom_painting",
@@ -107,21 +109,53 @@ export const GalleryWebMCP: React.FC<GalleryWebMCPProps> = ({
           ) => {
             if (signal?.aborted) return "Zoom operation cancelled.";
 
-            const numX = Number(x);
-            const numY = Number(y);
-            const numZoom = Number(zoom);
+            let numX = Number(x);
+            let numY = Number(y);
+            let numZoom = Number(zoom);
+            let label = detail_name || "Detail Inspection";
+
+            // Intelligent detail matching from curated masterpiece hotspots
+            if (currentArtworkRef.current?.focalPoints) {
+              const query = String(detail_name || '').toLowerCase().trim();
+              if (query) {
+                const match = currentArtworkRef.current.focalPoints.find((fp) => {
+                  const fpName = fp.name.toLowerCase();
+                  const fpId = (fp.id || '').toLowerCase();
+                  const fpDesc = (fp.shortDescription || '').toLowerCase();
+                  return (
+                    fpName.includes(query) || query.includes(fpName) ||
+                    fpId.includes(query) || query.includes(fpId) ||
+                    fpDesc.includes(query) ||
+                    (query.includes('tree') && (fpId.includes('cypress') || fpName.includes('cypress'))) ||
+                    ((query.includes('lip') || query.includes('smile') || query.includes('mouth')) && (fpId.includes('smile') || fpName.includes('smile')))
+                  );
+                });
+                if (match) {
+                  // If coordinates were generic (50/50 or unset), adopt exact curated coordinates
+                  if (!Number.isFinite(numX) || (numX === 50 && numY === 50)) {
+                    numX = match.x;
+                    numY = match.y;
+                    numZoom = match.zoom;
+                  }
+                  label = match.name;
+                }
+              }
+            }
+
             const clampedX = Number.isFinite(numX) ? Math.max(0, Math.min(100, numX)) : 50;
             const clampedY = Number.isFinite(numY) ? Math.max(0, Math.min(100, numY)) : 50;
             const clampedZoom = Number.isFinite(numZoom) ? Math.max(1, Math.min(8, numZoom)) : 2.5;
+
+            lastZoomTimestampRef.current = Date.now();
 
             onViewportChange({
               x: clampedX,
               y: clampedY,
               zoom: clampedZoom,
-              activeLabel: detail_name || "Detail Inspection",
+              activeLabel: label,
               isAutoAnimating: true,
             });
-            return `Camera focused on "${detail_name || 'canvas detail'}" at {x: ${clampedX}%, y: ${clampedY}%} at ${clampedZoom}x zoom.`;
+            return `Camera focused on "${label}" at {x: ${clampedX}%, y: ${clampedY}%} at ${clampedZoom}x zoom.`;
           },
           annotations: {
             readOnlyHint: true,
@@ -208,6 +242,15 @@ export const GalleryWebMCP: React.FC<GalleryWebMCPProps> = ({
             { signal }: { signal?: AbortSignal } = {}
           ) => {
             if (signal?.aborted) return "Reset view cancelled.";
+
+            // If the agent invoked zoom_painting and reset_view in the same turn (e.g., "zoom in, then reset"),
+            // pause gracefully so the visitor can absorb the zoomed detail before pulling the camera back
+            const timeSinceZoom = Date.now() - lastZoomTimestampRef.current;
+            if (timeSinceZoom < 2800) {
+              const pauseDuration = Math.max(800, 2500 - timeSinceZoom);
+              await new Promise((resolve) => setTimeout(resolve, pauseDuration));
+              if (signal?.aborted) return "Reset view cancelled.";
+            }
 
             onViewportChange({
               zoom: 1,
@@ -636,7 +679,7 @@ export const GalleryWebMCP: React.FC<GalleryWebMCPProps> = ({
         if (err?.name !== 'AbortError') console.error(err);
       });
 
-      // Tool 12: docent_speak
+      // Tool 12: Docent speak
       // Enables the browser AI agent to project its natural language reasoning directly into the Virtual Docent dialogue panel on the gallery screen.
       document.modelContext.registerTool(
         {

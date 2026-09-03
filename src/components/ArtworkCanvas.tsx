@@ -236,8 +236,8 @@ export const ArtworkCanvas: React.FC<ArtworkCanvasProps> = ({
             transform: `scale(${viewport.zoom})`,
             transformOrigin: `${viewport.x}% ${viewport.y}%`,
             transition: viewport.isAutoAnimating
-              ? 'transform 1000ms cubic-bezier(0.2, 0.9, 0.2, 1)'
-              : 'transform 150ms ease-out',
+              ? 'transform 1000ms cubic-bezier(0.2, 0.9, 0.2, 1), transform-origin 1000ms cubic-bezier(0.2, 0.9, 0.2, 1)'
+              : 'transform 150ms ease-out, transform-origin 150ms ease-out',
           }}
         >
           {/* High-res Artwork Image */}
