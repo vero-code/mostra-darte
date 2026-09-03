@@ -287,8 +287,6 @@ export const ArtworkCanvas: React.FC<ArtworkCanvasProps> = ({
                       e.stopPropagation();
                       onSelectFocalPoint(fp);
                     }}
-                    // onMouseEnter={() => setActiveHoverHotspot(fp)}
-                    // onMouseLeave={() => setActiveHoverHotspot(null)}
                   >
                     <div
                       className={`relative flex items-center justify-center transition-all duration-300 ${

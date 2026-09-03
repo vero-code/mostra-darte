@@ -60,23 +60,6 @@ export const DocentChat: React.FC<DocentChatProps> = ({
     }
   }, [pendingCoordQuery]);
 
-  // const handleSubmit = (e: React.FormEvent) => {
-  //   e.preventDefault();
-  //   if (!inputText.trim() || isThinking) return;
-
-  //   const query = inputText.trim();
-  //   setInputText('');
-  //   onSendMessage(query, pendingCoordQuery || undefined);
-  //   if (pendingCoordQuery) {
-  //     onClearCoordQuery();
-  //   }
-  // };
-
-  // const handleSuggestionClick = (prompt: string) => {
-  //   if (isThinking) return;
-  //   onSendMessage(prompt);
-  // };
-
   const handleReadAloud = (text: string) => {
     docentSpeech.speak(text, true);
   };
@@ -205,26 +188,6 @@ export const DocentChat: React.FC<DocentChatProps> = ({
         <div ref={messagesEndRef} />
       </div>
 
-      {/* Suggested Inquiries / Prompt Chips */}
-      {/* <div className="px-4 py-2 border-t border-stone-800 bg-stone-950/40">
-        <p className="text-[10px] uppercase font-mono tracking-wider text-amber-400/80 mb-2 flex items-center gap-1">
-          <HelpCircle className="w-3 h-3" />
-          Curatorial Inquiries for {artwork.title}
-        </p>
-        <div className="flex flex-wrap gap-1.5 max-h-24 overflow-y-auto">
-          {artwork.suggestedQuestions.map((question, i) => (
-            <button
-              key={i}
-              onClick={() => handleSuggestionClick(question)}
-              className="text-left text-xs bg-stone-800/70 hover:bg-stone-700/80 text-stone-300 hover:text-amber-200 px-2.5 py-1 rounded-full border border-stone-700/50 transition-colors flex items-center gap-1 group"
-            >
-              <span className="truncate max-w-[240px]">{question}</span>
-              <ArrowUpRight className="w-3 h-3 text-stone-500 group-hover:text-amber-400 shrink-0" />
-            </button>
-          ))}
-        </div>
-      </div> */}
-
       {/* Pending Canvas Coordinate Query Banner */}
       {pendingCoordQuery && (
         <div className="px-4 py-1.5 bg-amber-500/10 border-t border-amber-500/30 flex items-center justify-between text-xs text-amber-300">
@@ -240,34 +203,6 @@ export const DocentChat: React.FC<DocentChatProps> = ({
           </button>
         </div>
       )}
-
-      {/* Input Box */}
-      {/* <form onSubmit={handleSubmit} className="p-3 border-t border-stone-800 bg-stone-950">
-        <div className="relative flex items-center">
-          <input
-            id="docent-chat-input"
-            ref={inputRef}
-            type="text"
-            value={inputText}
-            onChange={(e) => setInputText(e.target.value)}
-            placeholder="Ask about a detail, color theory, or symbolism..."
-            disabled={isThinking}
-            className="w-full bg-stone-900 border border-stone-700/80 focus:border-amber-500/80 rounded-xl px-4 py-2.5 pr-12 text-sm text-stone-100 placeholder-stone-500 focus:outline-none focus:ring-1 focus:ring-amber-500/50 transition-all font-sans"
-          />
-          <button
-            id="btn-send-message"
-            type="submit"
-            disabled={!inputText.trim() || isThinking}
-            className={`absolute right-1.5 p-2 rounded-lg transition-colors ${
-              inputText.trim() && !isThinking
-                ? 'bg-amber-500 hover:bg-amber-400 text-stone-950 font-semibold'
-                : 'text-stone-600 bg-transparent cursor-not-allowed'
-            }`}
-          >
-            <Send className="w-4 h-4" />
-          </button>
-        </div>
-      </form> */}
     </div>
   );
 };
