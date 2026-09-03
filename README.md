@@ -31,9 +31,9 @@ In accordance with Google Chrome's [WebMCP Architecture Guidelines](https://web.
 
 ### 1. 🔍 Spatial Deep-Dive & Canvas Actuation (Art Connoisseur CUJ)
 - **Goal:** The visitor wants to visually understand subtle symbolism, hidden details, and geometric composition without manually panning and pinching.
-- **Verified Agent Prompt:** *"Exhibit the Mona Lisa, turn on the focused spotlight for dramatic atmosphere, and zoom in on her elusive smile."*
+- **Verified Agent Prompt:** *"Exhibit the Mona Lisa, zoom in on her hands, and turn on the focused spotlight for dramatic atmosphere."*
 - **Agent Execution Chain:**  
-  `switch_masterpiece({ artwork_id: "mona-lisa" })` ➔ `toggle_spotlight({ active: true })` ➔ `zoom_painting({ x: 50, y: 35, zoom: 3.5, detail_name: "Elusive Smile" })`.
+  `switch_masterpiece({ artwork_id: "mona-lisa" })` ➔ `zoom_painting({ x: 42, y: 83, zoom: 3.8, detail_name: "The Restful Folded Hands" })` ➔ `toggle_spotlight({ active: true })`.
 
 ### 2. 🏛️ Collection Filtration & Exhibition Curation (Curatorial CUJ)
 - **Goal:** The visitor explores the canonical collection on the grand salon wall.
@@ -128,15 +128,15 @@ Chrome includes a dedicated [WebMCP DevTools Debugger](https://developer.chrome.
 | # | Target WebMCP Tool | Verified Agent Prompt | Expected UI Actuation |
 |:---|:---|:---|:---|
 | 1️⃣ | **`zoom_painting`** | *"Show me the details of the moon in this painting"* | Camera glides and magnifies canvas details |
-| 2️⃣ | **`switch_masterpiece`** | *"Show me Mona Lisa"* | Wall exhibition mounts the requested masterpiece |
-| 3️⃣ | **`reset_view`** | *"Zoom in on the smile, then reset the view to see the whole painting"* | Zooms into detail, then smoothly restores 1.0x wide canvas |
-| 4️⃣ | **`toggle_spotlight`** | *"Zoom in on the moon and turn on the spotlight to highlight the painting."*<br/>*"Exhibit the Mona Lisa, turn on the focused spotlight for dramatic atmosphere, and zoom in on her elusive smile."* | Radial vignette darkens surroundings for museum atmosphere |
-| 5️⃣ | **`get_artwork_details`** | *"Tell me the historical background and key focal points of this painting, then zoom in on the most symbolic detail."* | Retrieves provenance & archives, then steers camera |
-| 6️⃣ | **`start_guided_tour`** | *"Please start a guided tour of this painting"* | Launches autonomous waypoint tour with voice narration |
-| 7️⃣ | **`toggle_curatorial_dossier`** | *"What pigments and colors did Van Gogh use for this sky? Show me the palette."*<br/>*"Show me the color palette and pigments used in this masterpiece"*<br/>*"Close the dossier and return to full canvas"* | Slides out research drawer on Palette; closes on command |
+| 2️⃣ | **`switch_masterpiece`** | *"Show me Michelangelo painting"* | Wall exhibition mounts the requested masterpiece |
+| 3️⃣ | **`reset_view`** | *"Show me the edge of the cliff with flowers, then reset the view"* | Zooms into detail, then smoothly restores 1.0x wide canvas and room lighting |
+| 4️⃣ | **`toggle_spotlight`** | *"Exhibit the Mona Lisa, zoom in on her hands, and turn on the focused spotlight for dramatic atmosphere."* | Dynamically tracks target coordinates and darkens room for dramatic museum lighting |
+| 5️⃣ | **`get_artwork_details`** | *"Can you switch the gallery display to wave. Tell me the historical background and key focal points of this painting, then zoom in on the most symbolic detail."* | Retrieves provenance & archives, switches painting, and steers camera |
+| 6️⃣ | **`start_guided_tour`** | *"Start a guided tour of The Starry Night."* | Launches autonomous waypoint tour with synchronized audio narration |
+| 7️⃣ | **`toggle_curatorial_dossier`** | *"Show me pearl."*<br/>*"What pigments and colors did Vermeer use for this masterpiece? Show me the palette."*<br/>*"Close the dossier and return to full canvas"* | Slides out research drawer on Palette or Overview; closes on command |
 | 8️⃣ | **`toggle_ambient_acoustics`** | *"Turn on the gallery ambient music to set a contemplative mood."*<br/>*"Mute the gallery ambient sound."* | Web Audio synthesizer starts or mutes gallery acoustics |
 | 9️⃣ | **`reserve_gallery_pass`** | *"Book 2 VIP passes for Alice on tomorrow's evening session"* | Generates verified digital VIP pass modal with QR badge |
-| 🔟 | **`toggle_composition_grid`** | *"Analyze the geometric balance of this painting and show the composition grid."*<br/>*"Hide the composition grid."* | Displays or hides Golden Ratio dynamic geometric overlay |
+| 🔟 | **`toggle_composition_grid`** | *"Switch to Botticelli."*<br/>*"Analyze the geometric balance of this painting and show the composition grid."*<br/>*"Hide the composition grid."* | Displays or hides Golden Ratio dynamic geometric overlay |
 | 1️⃣1️⃣ | **`open_salon_browser`** | *"Show me the entire gallery collection on the salon wall"* | Opens architectural full-screen salon gallery collection |
 | 1️⃣2️⃣ | **`docent_speak`** | *"Explain the pigments used in Starry Night and project your curatorial insights into the Virtual Docent."* | Streams agent's curatorial commentary into on-screen Virtual Docent dialogue (with voice) |
 

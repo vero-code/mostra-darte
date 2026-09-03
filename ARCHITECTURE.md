@@ -163,8 +163,8 @@ Enabling seamless bidirectional agent-to-screen communication:
 |:--|:---|:---|:---|:---|:---|
 | **1** | `zoom_painting` | Spatial Navigation | `true` | `x`, `y`, `zoom`, `detail_name` | Adjusts camera transform & zooms onto detail |
 | **2** | `switch_masterpiece` | Exhibition Switching | `true` | `artwork_id`, `reason` | Mounts new painting, resets camera, updates archives |
-| **3** | `reset_view` | Spatial Reset | `true` | `note` | Smoothly animates camera back to 1.0x wide view |
-| **4** | `toggle_spotlight` | Visual Lighting | `true` | `active` | Toggles vignette spotlight mask overlay |
+| **3** | `reset_view` | Spatial Reset | `true` | `note` | Smoothly animates camera back to 1.0x wide view and restores lighting |
+| **4** | `toggle_spotlight` | Visual Lighting | `true` | `active` | Dynamically tracks target coordinates & dims gallery room |
 | **5** | `get_artwork_details` | Archival Query | `true` | `artwork_id` | Returns provenance, palette, and focal coordinates |
 | **6** | `start_guided_tour` | Autonomous Narration | `true` | `note` | Triggers sequential waypoint navigation and speech |
 | **7** | `toggle_curatorial_dossier`| Research Drawer | `true` | `open`, `tab` | Slides out panel and selects specific tab |
@@ -173,6 +173,23 @@ Enabling seamless bidirectional agent-to-screen communication:
 | **10**| `toggle_composition_grid` | Geometric Analysis | `true` | `active` | Overlays Golden Ratio & Rule of Thirds grid |
 | **11**| `open_salon_browser` | Collection Filtration | `true` | `open`, `period`, `search` | Opens salon modal filtered by period or artist |
 | **12**| `docent_speak` | Curatorial Projection | `true` | `message` | Projects agent commentary to on-screen Virtual Docent dialogue & voice |
+
+### 4.1 Verified Evaluation Prompts Suite
+
+| # | Target Tool | Verified Agent Prompt | Expected UI Actuation |
+|:---|:---|:---|:---|
+| 1️⃣ | `zoom_painting` | *"Show me the details of the moon in this painting"* | Camera glides and magnifies canvas details |
+| 2️⃣ | `switch_masterpiece` | *"Show me Michelangelo painting"* | Wall exhibition mounts the requested masterpiece |
+| 3️⃣ | `reset_view` | *"Show me the edge of the cliff with flowers, then reset the view"* | Zooms into detail, then smoothly restores 1.0x wide canvas and lighting |
+| 4️⃣ | `toggle_spotlight` | *"Exhibit the Mona Lisa, zoom in on her hands, and turn on the focused spotlight for dramatic atmosphere."* | Dynamically tracks target coordinates and darkens room for dramatic museum lighting |
+| 5️⃣ | `get_artwork_details` | *"Can you switch the gallery display to wave. Tell me the historical background and key focal points of this painting, then zoom in on the most symbolic detail."* | Retrieves provenance & archives, switches painting, and steers camera |
+| 6️⃣ | `start_guided_tour` | *"Start a guided tour of The Starry Night."* | Launches autonomous waypoint tour with synchronized audio narration |
+| 7️⃣ | `toggle_curatorial_dossier` | *"Show me pearl."*<br/>*"What pigments and colors did Vermeer use for this masterpiece? Show me the palette."*<br/>*"Close the dossier and return to full canvas"* | Slides out research drawer on Palette or Overview; closes on command |
+| 8️⃣ | `toggle_ambient_acoustics` | *"Turn on the gallery ambient music to set a contemplative mood."*<br/>*"Mute the gallery ambient sound."* | Web Audio synthesizer starts or mutes gallery acoustics |
+| 9️⃣ | `reserve_gallery_pass` | *"Book 2 VIP passes for Alice on tomorrow's evening session"* | Generates verified digital VIP pass modal with QR badge |
+| 🔟 | `toggle_composition_grid` | *"Switch to Botticelli."*<br/>*"Analyze the geometric balance of this painting and show the composition grid."*<br/>*"Hide the composition grid."* | Displays or hides Golden Ratio dynamic geometric overlay |
+| 1️⃣1️⃣ | `open_salon_browser` | *"Show me the entire gallery collection on the salon wall"* | Opens architectural full-screen salon gallery collection |
+| 1️⃣2️⃣ | `docent_speak` | *"Explain the pigments used in Starry Night and project your curatorial insights into the Virtual Docent."* | Streams agent's curatorial commentary into on-screen Virtual Docent dialogue (with voice) |
 
 ---
 
@@ -195,7 +212,7 @@ sequenceDiagram
         Note over Agent,AppState: Step 1: Query Artwork Archival Data
         Agent->>WebMCP: get_artwork_details({ artwork_id: "starry-night" })
         WebMCP->>AppState: Read active masterpiece archives
-        AppState-->>WebMCP: Details (Focal points, Cypress {16, 58}, Moon {88, 15})
+        AppState-->>WebMCP: Details (Focal points, Cypress {18, 48}, Moon {89, 16})
         WebMCP-->>Agent: JSON curatorial payload
     end
 
@@ -219,9 +236,9 @@ sequenceDiagram
 
     rect rgb(24, 24, 27)
         Note over Agent,UI: Step 4: Physical Glide to Impasto Brushwork
-        Agent->>WebMCP: zoom_painting({ x: 16, y: 58, zoom: 3.2, detail_name: "Cypress Flame" })
-        WebMCP->>AppState: onViewportChange({ x: 16, y: 58, zoom: 3.2 })
-        AppState->>UI: Spring camera transforms canvas to (16%, 58%)
+        Agent->>WebMCP: zoom_painting({ x: 18, y: 48, zoom: 3.0, detail_name: "Cypress Flame" })
+        WebMCP->>AppState: onViewportChange({ x: 18, y: 48, zoom: 3.0 })
+        AppState->>UI: Spring camera transforms canvas to (18%, 48%)
         UI-->>WebMCP: Camera focused on Cypress Flame
         WebMCP-->>Agent: Actuation confirmed
     end
