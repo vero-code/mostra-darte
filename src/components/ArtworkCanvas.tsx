@@ -183,7 +183,7 @@ export const ArtworkCanvas: React.FC<ArtworkCanvasProps> = ({
         onViewportChange({ zoom: Math.max(1, viewport.zoom * 0.8), isAutoAnimating: false });
       } else if (e.key === '0') {
         setClickRipple(null);
-        onViewportChange({ zoom: 1, x: 50, y: 50, activeLabel: undefined, isAutoAnimating: true });
+        onViewportChange({ zoom: 1, x: 50, y: 50, activeLabel: undefined, isAutoAnimating: true, spotlightActive: false });
       } else if (e.key === 's' || e.key === 'S') {
         onViewportChange({ spotlightActive: !viewport.spotlightActive });
       }
@@ -441,6 +441,7 @@ export const ArtworkCanvas: React.FC<ArtworkCanvasProps> = ({
                 y: 50,
                 activeLabel: undefined,
                 isAutoAnimating: true,
+                spotlightActive: false,
               });
             }}
             className="p-2 rounded-md hover:bg-stone-800 text-stone-300 hover:text-amber-300 transition-colors"

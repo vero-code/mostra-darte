@@ -260,6 +260,7 @@ export const GalleryWebMCP: React.FC<GalleryWebMCPProps> = ({
               y: 50,
               activeLabel: undefined,
               isAutoAnimating: true,
+              spotlightActive: false,
             });
             return "Camera zoom successfully reset to 1.0x viewing the complete painting.";
           },
