@@ -324,7 +324,8 @@ function App() {
       timestamp: Date.now(),
     };
     setMessages((prev) => [...prev, assistantMsg]);
-    if (voiceEnabled) {
+    // Only speak aloud if voice is enabled and a guided tour is not already narrating
+    if (voiceEnabled && !activeTour) {
       docentSpeech.speak(message.trim());
     }
   };

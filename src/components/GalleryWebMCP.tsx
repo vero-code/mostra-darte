@@ -394,7 +394,7 @@ export const GalleryWebMCP: React.FC<GalleryWebMCPProps> = ({
         {
           name: "start_guided_tour",
           title: "Start Guided Tour",
-          description: "Launches an automated curatorial tour on the currently exhibited masterpiece, navigating through key historical focal points with pacing and voice narration.",
+          description: "Launches an automated curatorial tour on the currently exhibited masterpiece, navigating through key historical focal points with pacing and voice narration. Do not call docent_speak simultaneously, as the tour voice narrator is already active.",
           inputSchema: {
             type: "object",
             properties: {
@@ -416,7 +416,7 @@ export const GalleryWebMCP: React.FC<GalleryWebMCPProps> = ({
 
             if (onStartTourRef.current) {
               onStartTourRef.current();
-              return `Guided tour "${tour.title}" launched (${tour.stops.length} stops).`;
+              return `Guided tour "${tour.title}" launched (${tour.stops.length} stops). Audio narration is playing the tour.`;
             }
             return "Tour controller unavailable.";
           },
@@ -702,7 +702,7 @@ export const GalleryWebMCP: React.FC<GalleryWebMCPProps> = ({
         {
           name: "docent_speak",
           title: "Project Curatorial Message to Virtual Docent",
-          description: "Displays curatorial narration, educational insights, or answers directly in the Virtual Docent dialogue window on the gallery screen, and reads it aloud if voice narration is enabled.",
+          description: "Displays curatorial narration, educational insights, or answers directly in the Virtual Docent dialogue window on the gallery screen, and reads it aloud if voice narration is enabled. (Do not call when launching a guided tour, as the tour narrator automatically speaks).",
           inputSchema: {
             type: "object",
             properties: {
