@@ -357,17 +357,22 @@ export const ArtworkCanvas: React.FC<ArtworkCanvasProps> = ({
               </div>
             </div>
           )}
+
+          {/* Spotlight Mode Focused Beam (Accurately follows target reticle & viewport coordinates) */}
+          {viewport.spotlightActive && (
+            <div
+              className="absolute inset-0 pointer-events-none z-15 transition-all duration-700"
+              style={{
+                background: `radial-gradient(circle ${Math.max(120, 340 / viewport.zoom)}px at ${viewport.x}% ${viewport.y}%, transparent 0%, rgba(0, 0, 0, 0.45) 55%, rgba(0, 0, 0, 0.94) 100%)`,
+              }}
+            />
+          )}
         </div>
       </div>
 
-      {/* Spotlight Mode Overlay (Darkens perimeter, focusing docent attention) */}
-      {viewport.spotlightActive && viewport.zoom > 1 && (
-        <div
-          className="absolute inset-0 pointer-events-none z-15 transition-opacity duration-700"
-          style={{
-            background: `radial-gradient(circle 220px at 50% 50%, transparent 0%, rgba(0, 0, 0, 0.82) 85%, rgba(0,0,0,0.96) 100%)`,
-          }}
-        />
+      {/* Spotlight Mode Ambient Room Dimming */}
+      {viewport.spotlightActive && (
+        <div className="absolute inset-0 pointer-events-none z-10 bg-black/60 transition-opacity duration-700" />
       )}
 
       {/* Loupe / Magnifier Mode Overlay */}

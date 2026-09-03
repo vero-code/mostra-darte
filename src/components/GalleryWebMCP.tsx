@@ -55,6 +55,7 @@ export const GalleryWebMCP: React.FC<GalleryWebMCPProps> = ({
   onDocentSpeakRef.current = onDocentSpeak;
 
   const lastZoomTimestampRef = useRef<number>(0);
+  const lastSwitchTimestampRef = useRef<number>(0);
 
   useEffect(() => {
     if (typeof document === 'undefined' || !document.modelContext) {
@@ -209,6 +210,7 @@ export const GalleryWebMCP: React.FC<GalleryWebMCPProps> = ({
               const availableIds = MASTERPIECES.map(m => `"${m.id}" (${m.title})`).join(', ');
               return `Masterpiece "${artwork_id}" was not found in gallery collection. Available canonical masterpieces: ${availableIds}. Please retry with one of these valid IDs.`;
             }
+            lastSwitchTimestampRef.current = Date.now();
             onSelectArtwork(target);
             onViewportChange({ zoom: 1, x: 50, y: 50, activeLabel: undefined, isAutoAnimating: true });
             return `Gallery exhibition successfully switched to "${target.title}" by ${target.artist}.`;
@@ -293,6 +295,20 @@ export const GalleryWebMCP: React.FC<GalleryWebMCPProps> = ({
             if (signal?.aborted) return "Spotlight toggle cancelled.";
 
             const isEnabled = typeof active === 'boolean' ? active : true;
+
+            // If activating spotlight as part of a chain (after switching artwork or zooming to a point),
+            // wait ~2.2 seconds so the visitor can take in the scene before the room dramatically dims!
+            if (isEnabled) {
+              const timeSinceZoom = Date.now() - lastZoomTimestampRef.current;
+              const timeSinceSwitch = Date.now() - lastSwitchTimestampRef.current;
+              const recentActivity = Math.min(timeSinceZoom, timeSinceSwitch);
+              if (recentActivity < 2400) {
+                const waitMs = Math.max(600, 2200 - recentActivity);
+                await new Promise((resolve) => setTimeout(resolve, waitMs));
+                if (signal?.aborted) return "Spotlight toggle cancelled.";
+              }
+            }
+
             onViewportChange({ spotlightActive: isEnabled });
             return `Gallery spotlight dramatically ${isEnabled ? 'activated' : 'deactivated'}.`;
           },
