@@ -19,7 +19,7 @@ graph TD
         
         subgraph WebMCP_Layer ["W3C WebMCP Layer (document.modelContext)"]
             Registry["Tool Registry & Dispatcher<br/>(addEventListener 'toolchange' / getTools())"]
-            Tools["11 Registered Tools<br/>(zoom_painting, switch_masterpiece, etc.)"]
+            Tools["12 Registered Tools<br/>(zoom_painting, switch_masterpiece, docent_speak, etc.)"]
         end
         
         subgraph React_App ["Mostra d'Arte Single-Page Architecture"]
@@ -149,6 +149,12 @@ Demonstrating real-world service transactions executed via browser AI:
 - **Pass Verification**: Produces unique serial numbers (`MDA-2026-XXXX`), dates, session periods, and visitor badges.
 - **Visual Presentation**: High-contrast golden luxury modal with SVG verification QR code, digital receipt styling, and confirmation sound.
 
+### 3.6 Virtual Docent Agent Dialogue Projection (`DocentChat.tsx`)
+Enabling seamless bidirectional agent-to-screen communication:
+- **State Flow**: Invoked by `docent_speak({ message: "..." })`.
+- **Dialogue Projection**: Renders the agent's natural language reasoning, insights, or curatorial commentary directly into the visitor's on-screen chat stream.
+- **Speech Synthesis**: Synchronously triggers Web Speech API narration when voice mode is active.
+
 ---
 
 ## 4. Complete Tool Specification Matrix
@@ -166,6 +172,7 @@ Demonstrating real-world service transactions executed via browser AI:
 | **9** | `reserve_gallery_pass` | Transactional Action | `false` | `visitor_name`, `date`, `tickets_count`, `session` | Generates verified VIP admission ticket modal |
 | **10**| `toggle_composition_grid` | Geometric Analysis | `true` | `active` | Overlays Golden Ratio & Rule of Thirds grid |
 | **11**| `open_salon_browser` | Collection Filtration | `true` | `open`, `period`, `search` | Opens salon modal filtered by period or artist |
+| **12**| `docent_speak` | Curatorial Projection | `true` | `message` | Projects agent commentary to on-screen Virtual Docent dialogue & voice |
 
 ---
 
@@ -227,7 +234,7 @@ sequenceDiagram
 ## 6. Security & Intent Declarations
 
 In accordance with Google Chrome WebMCP Security Guidelines:
-- **`readOnlyHint: true`**: Declared on 10 out of 11 tools. Signals that executions are safe and non-destructive, avoiding annoying confirmation popups.
+- **`readOnlyHint: true`**: Declared on 11 out of 12 tools. Signals that executions are safe and non-destructive, avoiding annoying confirmation popups.
 - **Explicit Transactional Action**: `reserve_gallery_pass` omits `readOnlyHint` because it books a VIP admission pass and renders a ticket on screen.
 - **Chrome Character Budgets**: All tool names (<30 chars), descriptions (<500 chars), and outputs (<1.5 KB) strictly follow Google's character budgets to prevent LLM context overflow.
 - **Prompt Injection Defense**: All art facts and descriptions are vetted local museum archives, protecting the AI agent from malicious indirect prompt injections.

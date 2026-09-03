@@ -49,9 +49,9 @@ In accordance with Google Chrome's [WebMCP Architecture Guidelines](https://web.
 
 ---
 
-## 🛠️ Complete 11-Tool WebMCP Catalog
+## 🛠️ Complete 12-Tool WebMCP Catalog
 
-All 11 tools are registered in real time via `document.modelContext.registerTool()` with cooperative cancellation (`AbortSignal`):
+All 12 tools are registered in real time via `document.modelContext.registerTool()` with cooperative cancellation (`AbortSignal`):
 
 | # | Tool Name | Description | Annotations | Key Parameters |
 |:---|:---|:---|:---|:---|
@@ -66,6 +66,7 @@ All 11 tools are registered in real time via `document.modelContext.registerTool
 | **9** | **`reserve_gallery_pass`** | **Transactional:** Issues confirmed VIP exhibition pass with reservation ID and QR badge. | *(Action)* | `visitor_name`, `date`, `tickets_count`, `session` |
 | **10** | **`toggle_composition_grid`** | Overlays or hides the Golden Ratio dynamic geometric analysis grid on the canvas. | `readOnlyHint: true` | `active` (boolean) |
 | **11** | **`open_salon_browser`** | Opens the architectural Salon Wall browser with period filtering (`Dutch Golden Age`, etc.) and search. | `readOnlyHint: true` | `open` (boolean), `period` (string), `search` (string) |
+| **12** | **`docent_speak`** | Projects curatorial narration, educational insights, or answers directly into the Virtual Docent dialogue window on screen. | `readOnlyHint: true` | `message` (string) |
 
 ---
 
@@ -120,9 +121,9 @@ Chrome includes a dedicated [WebMCP DevTools Debugger](https://developer.chrome.
 ### Method B: Conversational AI via Model Context Tool Inspector Extension
 1. Install the official **[Model Context Tool Inspector Extension](https://chromewebstore.google.com/detail/model-context-tool-inspec/gbpdfapgefenggkahomfgkhfehlcenpd)** from the Chrome Web Store.
 2. Open **Mostra d'Arte** in Chrome.
-3. Open the extension side panel — you will immediately see all **11 WebMCP tools** detected automatically.
+3. Open the extension side panel — you will immediately see all **12 WebMCP tools** detected automatically.
 4. **Verified Evals & Benchmark Suite (Google Evals Framework):**  
-   Run these 11 verified benchmark prompts to test model tool selection, parameter binding, and real-time UI actuation:
+   Run these 12 verified benchmark prompts to test model tool selection, parameter binding, and real-time UI actuation:
 
 | # | Target WebMCP Tool | Verified Agent Prompt | Expected UI Actuation |
 |:---|:---|:---|:---|
@@ -137,6 +138,7 @@ Chrome includes a dedicated [WebMCP DevTools Debugger](https://developer.chrome.
 | 9️⃣ | **`reserve_gallery_pass`** | *"Book 2 VIP passes for Alice on tomorrow's evening session"* | Generates verified digital VIP pass modal with QR badge |
 | 🔟 | **`toggle_composition_grid`** | *"Analyze the geometric balance of this painting and show the composition grid."*<br/>*"Hide the composition grid."* | Displays or hides Golden Ratio dynamic geometric overlay |
 | 1️⃣1️⃣ | **`open_salon_browser`** | *"Show me the entire gallery collection on the salon wall"* | Opens architectural full-screen salon gallery collection |
+| 1️⃣2️⃣ | **`docent_speak`** | *"Explain the pigments used in Starry Night and project your curatorial insights into the Virtual Docent."* | Streams agent's curatorial commentary into on-screen Virtual Docent dialogue (with voice) |
 
 ---
 
