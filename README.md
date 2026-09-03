@@ -10,6 +10,11 @@
 [![Tailwind CSS v4](https://img.shields.io/badge/TailwindCSS-v4.3-38bdf8?style=flat-square&logo=tailwindcss)](https://tailwindcss.com/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-amber.svg?style=flat-square)](LICENSE)
 
+**Hackathon Submission:** Built for **[The WebMCP Challenge](https://devpost.com/software/mostra-d-arte)** on Devpost.
+
+[![Mostra d'Arte Video Demo](https://img.youtube.com/vi/OJcVbu27BcA/maxresdefault.jpg)](https://youtu.be/OJcVbu27BcA)
+> 🎬 *Click above to watch the 3-minute video walkthrough showcasing autonomous agent actuation, spatial navigation, and the 12 WebMCP tools.*
+
 ---
 
 ## 🌟 Overview
@@ -21,7 +26,7 @@ Traditional web applications require humans to navigate complex menus, sliders, 
 **Mostra d'Arte inverts this paradigm:**  
 By exposing client-side tools to browser AI agents via `document.modelContext.registerTool()`, the AI transitions from a passive conversationalist into an active **"Director of Attention"** — steering high-precision camera zooms, adjusting museum illumination, playing spatial room acoustics, opening curatorial research dossiers, and even issuing digital VIP admission passes in real time.
 
-> 📐 **Looking for complete protocol specifications, sequence diagrams, and component models? Check out our comprehensive [System Architecture Specification (ARCHITECTURE.md)](ARCHITECTURE.md).**
+> 📐 **Looking for complete protocol specifications, sequence diagrams, and component models? Check out [System Architecture Specification (ARCHITECTURE.md)](ARCHITECTURE.md).**
 
 ---
 
@@ -145,6 +150,8 @@ Chrome includes a dedicated [WebMCP DevTools Debugger](https://developer.chrome.
 ## 💻 Tech Stack
 
 - **Web Standard:** W3C WebMCP (Imperative JS API via `document.modelContext` + `webmcp-types`)
+- **Development Environment:** Google Antigravity IDE
+- **Design & Prototyping:** [Google AI Studio](https://aistudio.google.com/) (Gemini-powered UI/UX design & curatorial prototyping)
 - **Framework:** React 19 + TypeScript + Vite
 - **Styling:** Vanilla CSS + Tailwind CSS v4
 - **Animations:** Motion (`motion/react`)
