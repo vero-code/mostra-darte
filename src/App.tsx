@@ -314,6 +314,21 @@ function App() {
     setVoiceEnabled(!muted);
   };
 
+  // Docent Speak handler (WebMCP projection from AI agent)
+  const handleDocentSpeak = (message: string) => {
+    if (!message || !message.trim()) return;
+    const assistantMsg: ChatMessage = {
+      id: `docent-${Date.now()}`,
+      role: 'assistant',
+      content: message.trim(),
+      timestamp: Date.now(),
+    };
+    setMessages((prev) => [...prev, assistantMsg]);
+    if (voiceEnabled) {
+      docentSpeech.speak(message.trim());
+    }
+  };
+
   return (
     <div className="flex flex-col h-screen w-screen overflow-hidden bg-stone-950 text-stone-100 antialiased font-sans">
       {/* Top Gallery Navigation Bar */}
@@ -331,6 +346,7 @@ function App() {
         onToggleDossier={handleToggleDossier}
         onReservePass={handleReservePass}
         onToggleSalon={handleToggleSalon}
+        onDocentSpeak={handleDocentSpeak}
       />
 
       {/* Mobile View Switcher Tab Bar */}

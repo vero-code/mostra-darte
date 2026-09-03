@@ -15,6 +15,7 @@ interface GalleryWebMCPProps {
   onToggleAmbient?: (forceActive?: boolean) => void;
   onReservePass?: (pass: BookingPass) => void;
   onToggleSalon?: (open: boolean, period?: string, search?: string) => void;
+  onDocentSpeak?: (message: string) => void;
 }
 
 export const GalleryWebMCP: React.FC<GalleryWebMCPProps> = ({
@@ -26,6 +27,7 @@ export const GalleryWebMCP: React.FC<GalleryWebMCPProps> = ({
   onToggleAmbient,
   onReservePass,
   onToggleSalon,
+  onDocentSpeak,
 }) => {
   const [isSupported, setIsSupported] = useState(false);
   const [isRegistered, setIsRegistered] = useState(false);
@@ -48,6 +50,9 @@ export const GalleryWebMCP: React.FC<GalleryWebMCPProps> = ({
 
   const onToggleSalonRef = useRef(onToggleSalon);
   onToggleSalonRef.current = onToggleSalon;
+
+  const onDocentSpeakRef = useRef(onDocentSpeak);
+  onDocentSpeakRef.current = onDocentSpeak;
 
   useEffect(() => {
     if (typeof document === 'undefined' || !document.modelContext) {
@@ -621,6 +626,46 @@ export const GalleryWebMCP: React.FC<GalleryWebMCPProps> = ({
               return `Masterpiece Salon Wall opened${filterDetails ? ` (filtered by ${filterDetails})` : ''}.`;
             }
             return "Salon controller unavailable.";
+          },
+          annotations: {
+            readOnlyHint: true,
+          }
+        },
+        { signal: controller.signal }
+      )?.catch?.((err: any) => {
+        if (err?.name !== 'AbortError') console.error(err);
+      });
+
+      // Tool 12: docent_speak
+      // Enables the browser AI agent to project its natural language reasoning directly into the Virtual Docent dialogue panel on the gallery screen.
+      document.modelContext.registerTool(
+        {
+          name: "docent_speak",
+          title: "Project Curatorial Message to Virtual Docent",
+          description: "Displays curatorial narration, educational insights, or answers directly in the Virtual Docent dialogue window on the gallery screen, and reads it aloud if voice narration is enabled.",
+          inputSchema: {
+            type: "object",
+            properties: {
+              message: {
+                type: "string",
+                description: "The curatorial explanation, commentary, or response to display to the visitor on screen."
+              }
+            },
+            required: ["message"]
+          },
+          execute: async (
+            { message }: any,
+            { signal }: { signal?: AbortSignal } = {}
+          ) => {
+            if (signal?.aborted) return "Narration cancelled.";
+            const cleanMsg = typeof message === 'string' ? message.trim() : '';
+            if (!cleanMsg) return "No message content provided to display.";
+
+            if (onDocentSpeakRef.current) {
+              onDocentSpeakRef.current(cleanMsg);
+              return `Curatorial commentary successfully projected to the Virtual Docent dialogue window on screen.`;
+            }
+            return "Virtual Docent controller unavailable.";
           },
           annotations: {
             readOnlyHint: true,

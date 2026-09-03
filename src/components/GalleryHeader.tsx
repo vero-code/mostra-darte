@@ -28,6 +28,7 @@ interface GalleryHeaderProps {
   onToggleDossier?: (open: boolean, tab?: 'overview' | 'focal' | 'palette' | 'tours') => void;
   onReservePass?: (pass: BookingPass) => void;
   onToggleSalon?: (open: boolean, period?: string, search?: string) => void;
+  onDocentSpeak?: (message: string) => void;
 }
 
 export const GalleryHeader: React.FC<GalleryHeaderProps> = ({
@@ -44,6 +45,7 @@ export const GalleryHeader: React.FC<GalleryHeaderProps> = ({
   onToggleDossier,
   onReservePass,
   onToggleSalon,
+  onDocentSpeak,
 }) => {
   const [dropdownOpen, setDropdownOpen] = useState(false);
 
@@ -150,6 +152,7 @@ export const GalleryHeader: React.FC<GalleryHeaderProps> = ({
           onToggleAmbient={onToggleAmbient}
           onReservePass={onReservePass}
           onToggleSalon={onToggleSalon}
+          onDocentSpeak={onDocentSpeak}
         />
 
         {/* Salon Wall Browser */}
